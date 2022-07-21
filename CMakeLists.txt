@@ -50,6 +50,7 @@ include_directories (
     ${PROJECT_SOURCE_DIR}/src/cusparse
     ${PROJECT_SOURCE_DIR}/src/cusolver
     ${PROJECT_SOURCE_DIR}/src/nvjpeg
+    ${PROJECT_SOURCE_DIR}/src/nvblas
 )
 
 set (LIB_SRCS
@@ -66,6 +67,7 @@ set (LIB_SRCS
     ${PROJECT_SOURCE_DIR}/src/cusparse/cusparse_hook.cpp
     ${PROJECT_SOURCE_DIR}/src/cusolver/cusolver_hook.cpp
     ${PROJECT_SOURCE_DIR}/src/nvjpeg/nvjpeg_hook.cpp
+    ${PROJECT_SOURCE_DIR}/src/nvblas/nvblas_hook.cpp
 )
 
 # libcuda_hook.so

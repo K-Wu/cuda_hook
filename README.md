@@ -3,7 +3,7 @@ Hooked CUDA-related dynamic libraries by using automated code generation tools. 
 
 It implements an ingenious tool to automatically generate code that hooks the CUDA api with CUDA native header files, and is extremely practical and extensible.
 
-At present, the hooking of dynamic libraries such as cuda driver, nvml, cuda runtime, cudnn, cublas, cublasLt, cufft, nvtx, nvrtc, curand, cusparse, cusolver and nvjpeg has been completed, and it can also be easily extended to the hooking of other cuda dynamic libraries.
+At present, the hooking of dynamic libraries such as cuda driver, nvml, cuda runtime, cudnn, cublas, cublasLt, cufft, nvtx, nvrtc, curand, cusparse, cusolver, nvjpeg and nvblas has been completed, and it can also be easily extended to the hooking of other cuda dynamic libraries.
 
 # Support Dynamic Libraries
 - CUDA Driver: libcuda.so
@@ -19,6 +19,7 @@ At present, the hooking of dynamic libraries such as cuda driver, nvml, cuda run
 - CUSPARSE: libcusparse.so
 - CUSOLVER: libcusolver.so
 - NVJPEG: libnvjpeg.so
+- NVBLAS: libnvblas.so
 
 # Compile
 ## Environment
