@@ -3580,4 +3580,4 @@ static inline CUresult cuGetProcAddress_ptsz(const char *symbol, void **funcPtr,
 
 #undef __CUDA_DEPRECATED
 
-#endif __CUDA_HOOK_CUDA_SUBSET_H__
+#endif //__CUDA_HOOK_CUDA_SUBSET_H__

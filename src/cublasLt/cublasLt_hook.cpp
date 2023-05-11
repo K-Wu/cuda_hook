@@ -86,9 +86,9 @@ HOOK_C_API HOOK_DECL_EXPORT cublasStatus_t cublasLtMatrixLayoutInit_internal(cub
     return func_entry(matLayout, size, type, rows, cols, ld);
 }
 
-HOOK_C_API HOOK_DECL_EXPORT static inline cublasStatus_t cublasLtMatrixLayoutInit(cublasLtMatrixLayout_t matLayout, cudaDataType type, uint64_t rows, uint64_t cols, int64_t ld) {
+HOOK_C_API HOOK_DECL_EXPORT cublasStatus_t cublasLtMatrixLayoutInit(cublasLtMatrixLayout_t matLayout, cudaDataType type, uint64_t rows, uint64_t cols, int64_t ld) {
     HOOK_TRACE_PROFILE("cublasLtMatrixLayoutInit");
-    using func_ptr = static inline cublasStatus_t (*)(cublasLtMatrixLayout_t, cudaDataType, uint64_t, uint64_t, int64_t);
+    using func_ptr =  cublasStatus_t (*)(cublasLtMatrixLayout_t, cudaDataType, uint64_t, uint64_t, int64_t);
     static auto func_entry = reinterpret_cast<func_ptr>(HOOK_CUBLASLT_SYMBOL("cublasLtMatrixLayoutInit"));
     HOOK_CHECK(func_entry);
     return func_entry(matLayout, type, rows, cols, ld);
@@ -134,9 +134,9 @@ HOOK_C_API HOOK_DECL_EXPORT cublasStatus_t cublasLtMatmulDescInit_internal(cubla
     return func_entry(matmulDesc, size, computeType, scaleType);
 }
 
-HOOK_C_API HOOK_DECL_EXPORT static inline cublasStatus_t cublasLtMatmulDescInit(cublasLtMatmulDesc_t matmulDesc, cublasComputeType_t computeType, cudaDataType_t scaleType) {
+HOOK_C_API HOOK_DECL_EXPORT cublasStatus_t cublasLtMatmulDescInit(cublasLtMatmulDesc_t matmulDesc, cublasComputeType_t computeType, cudaDataType_t scaleType) {
     HOOK_TRACE_PROFILE("cublasLtMatmulDescInit");
-    using func_ptr = static inline cublasStatus_t (*)(cublasLtMatmulDesc_t, cublasComputeType_t, cudaDataType_t);
+    using func_ptr =  cublasStatus_t (*)(cublasLtMatmulDesc_t, cublasComputeType_t, cudaDataType_t);
     static auto func_entry = reinterpret_cast<func_ptr>(HOOK_CUBLASLT_SYMBOL("cublasLtMatmulDescInit"));
     HOOK_CHECK(func_entry);
     return func_entry(matmulDesc, computeType, scaleType);
@@ -182,9 +182,9 @@ HOOK_C_API HOOK_DECL_EXPORT cublasStatus_t cublasLtMatrixTransformDescInit_inter
     return func_entry(transformDesc, size, scaleType);
 }
 
-HOOK_C_API HOOK_DECL_EXPORT static inline cublasStatus_t cublasLtMatrixTransformDescInit(cublasLtMatrixTransformDesc_t transformDesc, cudaDataType scaleType) {
+HOOK_C_API HOOK_DECL_EXPORT cublasStatus_t cublasLtMatrixTransformDescInit(cublasLtMatrixTransformDesc_t transformDesc, cudaDataType scaleType) {
     HOOK_TRACE_PROFILE("cublasLtMatrixTransformDescInit");
-    using func_ptr = static inline cublasStatus_t (*)(cublasLtMatrixTransformDesc_t, cudaDataType);
+    using func_ptr =  cublasStatus_t (*)(cublasLtMatrixTransformDesc_t, cudaDataType);
     static auto func_entry = reinterpret_cast<func_ptr>(HOOK_CUBLASLT_SYMBOL("cublasLtMatrixTransformDescInit"));
     HOOK_CHECK(func_entry);
     return func_entry(transformDesc, scaleType);
@@ -230,9 +230,9 @@ HOOK_C_API HOOK_DECL_EXPORT cublasStatus_t cublasLtMatmulPreferenceInit_internal
     return func_entry(pref, size);
 }
 
-HOOK_C_API HOOK_DECL_EXPORT static inline cublasStatus_t cublasLtMatmulPreferenceInit(cublasLtMatmulPreference_t pref) {
+HOOK_C_API HOOK_DECL_EXPORT cublasStatus_t cublasLtMatmulPreferenceInit(cublasLtMatmulPreference_t pref) {
     HOOK_TRACE_PROFILE("cublasLtMatmulPreferenceInit");
-    using func_ptr = static inline cublasStatus_t (*)(cublasLtMatmulPreference_t);
+    using func_ptr =  cublasStatus_t (*)(cublasLtMatmulPreference_t);
     static auto func_entry = reinterpret_cast<func_ptr>(HOOK_CUBLASLT_SYMBOL("cublasLtMatmulPreferenceInit"));
     HOOK_CHECK(func_entry);
     return func_entry(pref);

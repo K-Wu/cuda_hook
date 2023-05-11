@@ -1,7 +1,7 @@
 
 // auto generate 60 apis
 
-#include "nvblas_subset.h"
+#include "cublas_subset.h"
 #include "hook.h"
 #include "macro_common.h"
 #include "trace_profile.h"

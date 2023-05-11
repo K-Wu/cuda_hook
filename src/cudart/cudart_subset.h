@@ -2432,7 +2432,7 @@ struct cudaExternalSemaphoreHandleDesc {
 /**
  * External semaphore signal parameters(deprecated)
  */
-struct __device_builtin__ cudaExternalSemaphoreSignalParams_v1 {
+struct  cudaExternalSemaphoreSignalParams_v1 {
     struct {
         /**
          * Parameters for fence objects
@@ -2477,7 +2477,7 @@ struct __device_builtin__ cudaExternalSemaphoreSignalParams_v1 {
 /**
 * External semaphore wait parameters(deprecated)
 */
-struct __device_builtin__ cudaExternalSemaphoreWaitParams_v1 {
+struct  cudaExternalSemaphoreWaitParams_v1 {
     struct {
         /**
         * Parameters for fence objects
@@ -2526,7 +2526,7 @@ struct __device_builtin__ cudaExternalSemaphoreWaitParams_v1 {
 /**
  * External semaphore signal parameters, compatible with driver type
  */
-struct __device_builtin__ cudaExternalSemaphoreSignalParams{
+struct  cudaExternalSemaphoreSignalParams{
     struct {
         /**
          * Parameters for fence objects
@@ -2573,7 +2573,7 @@ struct __device_builtin__ cudaExternalSemaphoreSignalParams{
 /**
  * External semaphore wait parameters, compatible with driver type
  */
-struct __device_builtin__ cudaExternalSemaphoreWaitParams {
+struct  cudaExternalSemaphoreWaitParams {
     struct {
         /**
         * Parameters for fence objects

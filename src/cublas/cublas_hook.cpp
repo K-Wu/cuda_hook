@@ -3566,9 +3566,9 @@ HOOK_C_API HOOK_DECL_EXPORT cublasStatus_t cublasZtrttp(cublasHandle_t handle, c
     return func_entry(handle, uplo, n, A, lda, AP);
 }
 
-HOOK_C_API HOOK_DECL_EXPORT static inline cublasStatus_t cublasMigrateComputeType(cublasHandle_t handle, cudaDataType_t dataType, cublasComputeType_t * computeType) {
+HOOK_C_API HOOK_DECL_EXPORT cublasStatus_t cublasMigrateComputeType(cublasHandle_t handle, cudaDataType_t dataType, cublasComputeType_t * computeType) {
     HOOK_TRACE_PROFILE("cublasMigrateComputeType");
-    using func_ptr = static inline cublasStatus_t (*)(cublasHandle_t, cudaDataType_t, cublasComputeType_t *);
+    using func_ptr =  cublasStatus_t (*)(cublasHandle_t, cudaDataType_t, cublasComputeType_t *);
     static auto func_entry = reinterpret_cast<func_ptr>(HOOK_CUBLAS_SYMBOL("cublasMigrateComputeType"));
     HOOK_CHECK(func_entry);
     return func_entry(handle, dataType, computeType);

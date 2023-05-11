@@ -3054,9 +3054,9 @@ HOOK_C_API HOOK_DECL_EXPORT CUresult cuStreamBeginCapture_v2(CUstream hStream, C
     return func_entry(hStream, mode);
 }
 
-HOOK_C_API HOOK_DECL_EXPORT static inline CUresult cuGetProcAddress_ptsz(const char * symbol, void * * funcPtr, int driverVersion, cuuint64_t flags) {
+HOOK_C_API HOOK_DECL_EXPORT  CUresult cuGetProcAddress_ptsz(const char * symbol, void * * funcPtr, int driverVersion, cuuint64_t flags) {
     HOOK_TRACE_PROFILE("cuGetProcAddress_ptsz");
-    using func_ptr = static inline CUresult (*)(const char *, void * *, int, cuuint64_t);
+    using func_ptr =  CUresult (*)(const char *, void * *, int, cuuint64_t);
     static auto func_entry = reinterpret_cast<func_ptr>(HOOK_CUDA_SYMBOL("cuGetProcAddress_ptsz"));
     HOOK_CHECK(func_entry);
     return func_entry(symbol, funcPtr, driverVersion, flags);

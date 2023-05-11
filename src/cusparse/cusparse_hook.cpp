@@ -1,6 +1,7 @@
 
 // auto generate 524 apis
 
+#include "cublas_subset.h"
 #include "cusparse_subset.h"
 #include "hook.h"
 #include "macro_common.h"

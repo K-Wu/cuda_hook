@@ -168,6 +168,8 @@ typedef enum {
     CUSPARSE_ALG_MERGE_PATH  // merge path alias
 } cusparseAlgMode_t;
 
+typedef void (*cusparseLoggerCallback_t)(int logLevel, const char *functionName, const char *message);
+
 typedef enum {
     CUSPARSE_CSR2CSC_ALG1 = 1,  // faster than V2 (in general), deterministc
     CUSPARSE_CSR2CSC_ALG2 = 2   // low memory requirement, non-deterministc
@@ -269,5 +271,11 @@ typedef enum { CUSPARSE_SDDMM_ALG_DEFAULT = 0 } cusparseSDDMMAlg_t;
 #ifdef __cplusplus
 }
 #endif
+
+
+struct cusparseSpMMOpPlan;
+typedef struct cusparseSpMMOpPlan *cusparseSpMMOpPlan_t;
+
+typedef enum { CUSPARSE_SPMM_OP_ALG_DEFAULT } cusparseSpMMOpAlg_t;
 
 #endif  // __CUDA_HOOK_CUSPARSE_SUBSET_H__

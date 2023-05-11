@@ -82,7 +82,7 @@
 extern "C" {
 #endif
 
-//typedef struct __half __half;
+typedef struct __half __half;
 
 
 typedef enum cudaDataType_t {
