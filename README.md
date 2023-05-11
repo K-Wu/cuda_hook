@@ -57,24 +57,24 @@ cd tools/code_generate
 
 # Update to 11.6
 The original repo uses CUDA 11.4, and we need to update it to CUDA 11.6. The following is a summary of the update process.
-## Updating the raw headers as input to the code_generate python tool.
+## I. Updating the raw headers as input to the code_generate python tool.
 Copy the corresponding headers from the CUDA 11.6 installation to the include folder.
-## Modifications to the generated code
+## II. Modifications to the generated code
 Some changes need to be made according to the include headers in the original repo. The authors changed the code based on CUDA raw headers in order to generate shared libraries in the same way as the original CUDA.
 ### cublas.h, cublas_v2.h, cublasXt.h
  the following two modifications needs to be made to cublas.h before code generate
- // (1) add __half
- (2) add content in the bottom from cublas_api.h and cublasXt.h
- disabling functions with nvbfloat16 arguments
+ * (1) no need to add __half at this stage but we will need it in the _subset.h header later.
+ * (2) add content in the bottom from cublas_api.h and cublasXt.h
+ * disabling functions with nvbfloat16 arguments
 ### cusparse.h, cusparse_v2.h
  the following two modifications have been made
- (1) delete CUSPARSE_DEPRECATED and CUSPARSE_DEPRECATED_ENUM
- // (2) add __half
- merge cusparse_v2.h to cusparse.h 
+ * (1) delete CUSPARSE_DEPRECATED and CUSPARSE_DEPRECATED_ENUM
+ * (2) no need to add __half at this stage but we will need it in the _subset.h header later.
+ * merge cusparse_v2.h to cusparse.h 
 ### cuda_runtime_api.h
-todo 
  the following two modifications have been made
- (1) delete __dv()
- (2) add functions in the bottom from host_runtime.h and device_functions.h
-## manual creation of _subset.h headers
+ * (1) delete __dv()
+ * (2) add functions in the bottom from host_runtime.h and device_functions.h
+## III. manual creation of _subset.h headers
 Stuff not in the generated code needs to be manually added to the _subset.h headers, such as enum types, structs, typedef, macros, etc.
+Notice that we need to add __half at this time.
