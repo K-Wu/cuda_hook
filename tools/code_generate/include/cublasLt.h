@@ -106,7 +106,7 @@ typedef struct {
 /** Semi-opaque descriptor for cublasLtMatmul() operation details
  */
 typedef struct {
-  uint64_t data[11];
+  uint64_t data[12];
 } cublasLtMatmulDescOpaque_t;
 
 /** Opaque descriptor for cublasLtMatmul() operation details
@@ -663,6 +663,12 @@ typedef enum {
    */
   CUBLASLT_MATMUL_DESC_ALPHA_VECTOR_BATCH_STRIDE = 14,
 
+  /** Number of SMs to target for parallel execution. Optimizes heuristics for execution on a different number of SMs
+   * when user expects a concurrent stream to be using some of the device resources.
+   *
+   * int32_t, default: 0 - use the number reported by the device.
+   */
+  CUBLASLT_MATMUL_DESC_SM_COUNT_TARGET = 15,
 } cublasLtMatmulDescAttributes_t;
 
 /** Internal. Do not use directly.
@@ -904,6 +910,13 @@ typedef enum {
    */
   CUBLASLT_EPILOGUE_RELU_AUX_BIAS = (CUBLASLT_EPILOGUE_RELU_AUX | CUBLASLT_EPILOGUE_BIAS),
 
+  /* ReLu gradient. Apply ReLu gradient to matmul output. Store ReLu gradient in the output matrix.
+   *
+   * This epilogue mode requires an extra input,
+   * see CUBLASLT_MATMUL_DESC_EPILOGUE_AUX_POINTER.
+   */
+  CUBLASLT_EPILOGUE_DRELU = 8 | 128,
+
   /* ReLu and Bias gradients. Apply independently ReLu and Bias gradient to
    * matmul output. Store ReLu gradient in the output matrix, and Bias gradient
    * in the auxiliary output (see CUBLASLT_MATMUL_DESC_BIAS_POINTER).
@@ -911,7 +924,7 @@ typedef enum {
    * This epilogue mode requires an extra input,
    * see CUBLASLT_MATMUL_DESC_EPILOGUE_AUX_POINTER.
    */
-  CUBLASLT_EPILOGUE_DRELU_BGRAD = 8 | 16 | 128,
+  CUBLASLT_EPILOGUE_DRELU_BGRAD = CUBLASLT_EPILOGUE_DRELU | 16,
 
   /** GELU, apply GELU point-wise transform to the results (x:=GELU(x)).
    */
@@ -935,6 +948,13 @@ typedef enum {
    */
   CUBLASLT_EPILOGUE_GELU_AUX_BIAS = (CUBLASLT_EPILOGUE_GELU_AUX | CUBLASLT_EPILOGUE_BIAS),
 
+  /* GELU gradient. Apply GELU gradient to matmul output. Store GELU gradient in the output matrix.
+   *
+   * This epilogue mode requires an extra input,
+   * see CUBLASLT_MATMUL_DESC_EPILOGUE_AUX_POINTER.
+   */
+  CUBLASLT_EPILOGUE_DGELU = 64 | 128,
+
   /* GELU and Bias gradients. Apply independently GELU and Bias gradient to
    * matmul output. Store GELU gradient in the output matrix, and Bias gradient
    * in the auxiliary output (see CUBLASLT_MATMUL_DESC_BIAS_POINTER).
@@ -942,7 +962,7 @@ typedef enum {
    * This epilogue mode requires an extra input,
    * see CUBLASLT_MATMUL_DESC_EPILOGUE_AUX_POINTER.
    */
-  CUBLASLT_EPILOGUE_DGELU_BGRAD = 16 | 64 | 128,
+  CUBLASLT_EPILOGUE_DGELU_BGRAD = CUBLASLT_EPILOGUE_DGELU | 16,
 
   /** Bias gradient based on the input matrix A.
    *
@@ -1097,10 +1117,13 @@ typedef enum {
    */
   CUBLASLT_MATMUL_PREF_IMPL_MASK = 12,
 
-  /** Number of SMs to target for parallel execution. Optimizes heuristics for execution in smaller number of SM when
-   * user expects a concurrent stream to be using some of the device resources.
+  /** Number of SMs to target for parallel execution. Optimizes heuristics for execution on a different number of SMs
+   * when user expects a concurrent stream to be using some of the device resources.
+   *
+   * Overrides the SM count target set in the matrix multiplication descriptor (see cublasLtMatmulDescAttributes_t).
    *
    * int32_t, default: 0 - use the number reported by the device.
+   * DEPRECATED, will be removed in a future release, see cublasLtMatmulDescAttributes_t for replacement
    */
   CUBLASLT_MATMUL_PREF_SM_COUNT_TARGET = 13,
 } cublasLtMatmulPreferenceAttributes_t;

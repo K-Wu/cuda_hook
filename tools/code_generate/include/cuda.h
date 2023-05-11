@@ -50,6 +50,8 @@
 #ifndef __cuda_cuda_h__
 #define __cuda_cuda_h__
 
+
+
 #include <stdlib.h>
 #ifdef _MSC_VER
 typedef unsigned __int32 cuuint32_t;
@@ -176,6 +178,9 @@ typedef uint64_t cuuint64_t;
     #define cuEventRecord                       __CUDA_API_PTSZ(cuEventRecord)
     #define cuEventRecordWithFlags              __CUDA_API_PTSZ(cuEventRecordWithFlags)
     #define cuLaunchKernel                      __CUDA_API_PTSZ(cuLaunchKernel)
+
+
+
     #define cuLaunchHostFunc                    __CUDA_API_PTSZ(cuLaunchHostFunc)
     #define cuGraphicsMapResources              __CUDA_API_PTSZ(cuGraphicsMapResources)
     #define cuGraphicsUnmapResources            __CUDA_API_PTSZ(cuGraphicsUnmapResources)
@@ -224,7 +229,7 @@ typedef uint64_t cuuint64_t;
 /**
  * CUDA API version number
  */
-#define CUDA_VERSION 11040
+#define CUDA_VERSION 11060
 
 #ifdef __cplusplus
 extern "C" {
@@ -496,7 +501,33 @@ typedef enum CUarray_format_enum {
     CU_AD_FORMAT_SIGNED_INT32   = 0x0a, /**< Signed 32-bit integers */
     CU_AD_FORMAT_HALF           = 0x10, /**< 16-bit floating point */
     CU_AD_FORMAT_FLOAT          = 0x20, /**< 32-bit floating point */
-    CU_AD_FORMAT_NV12           = 0xb0
+    CU_AD_FORMAT_NV12           = 0xb0, /**< 8-bit YUV planar format, with 4:2:0 sampling */
+    CU_AD_FORMAT_UNORM_INT8X1   = 0xc0, /**< 1 channel unsigned 8-bit normalized integer */
+    CU_AD_FORMAT_UNORM_INT8X2   = 0xc1, /**< 2 channel unsigned 8-bit normalized integer */
+    CU_AD_FORMAT_UNORM_INT8X4   = 0xc2, /**< 4 channel unsigned 8-bit normalized integer */
+    CU_AD_FORMAT_UNORM_INT16X1  = 0xc3, /**< 1 channel unsigned 16-bit normalized integer */
+    CU_AD_FORMAT_UNORM_INT16X2  = 0xc4, /**< 2 channel unsigned 16-bit normalized integer */
+    CU_AD_FORMAT_UNORM_INT16X4  = 0xc5, /**< 4 channel unsigned 16-bit normalized integer */
+    CU_AD_FORMAT_SNORM_INT8X1   = 0xc6, /**< 1 channel signed 8-bit normalized integer */
+    CU_AD_FORMAT_SNORM_INT8X2   = 0xc7, /**< 2 channel signed 8-bit normalized integer */
+    CU_AD_FORMAT_SNORM_INT8X4   = 0xc8, /**< 4 channel signed 8-bit normalized integer */
+    CU_AD_FORMAT_SNORM_INT16X1  = 0xc9, /**< 1 channel signed 16-bit normalized integer */
+    CU_AD_FORMAT_SNORM_INT16X2  = 0xca, /**< 2 channel signed 16-bit normalized integer */
+    CU_AD_FORMAT_SNORM_INT16X4  = 0xcb, /**< 4 channel signed 16-bit normalized integer */
+    CU_AD_FORMAT_BC1_UNORM      = 0x91, /**< 4 channel unsigned normalized block-compressed (BC1 compression) format */
+    CU_AD_FORMAT_BC1_UNORM_SRGB = 0x92, /**< 4 channel unsigned normalized block-compressed (BC1 compression) format with sRGB encoding*/
+    CU_AD_FORMAT_BC2_UNORM      = 0x93, /**< 4 channel unsigned normalized block-compressed (BC2 compression) format */
+    CU_AD_FORMAT_BC2_UNORM_SRGB = 0x94, /**< 4 channel unsigned normalized block-compressed (BC2 compression) format with sRGB encoding*/
+    CU_AD_FORMAT_BC3_UNORM      = 0x95, /**< 4 channel unsigned normalized block-compressed (BC3 compression) format */
+    CU_AD_FORMAT_BC3_UNORM_SRGB = 0x96, /**< 4 channel unsigned normalized block-compressed (BC3 compression) format with sRGB encoding*/
+    CU_AD_FORMAT_BC4_UNORM      = 0x97, /**< 1 channel unsigned normalized block-compressed (BC4 compression) format */
+    CU_AD_FORMAT_BC4_SNORM      = 0x98, /**< 1 channel signed normalized block-compressed (BC4 compression) format */
+    CU_AD_FORMAT_BC5_UNORM      = 0x99, /**< 2 channel unsigned normalized block-compressed (BC5 compression) format */
+    CU_AD_FORMAT_BC5_SNORM      = 0x9a, /**< 2 channel signed normalized block-compressed (BC5 compression) format */
+    CU_AD_FORMAT_BC6H_UF16      = 0x9b, /**< 3 channel unsigned half-float block-compressed (BC6H compression) format */
+    CU_AD_FORMAT_BC6H_SF16      = 0x9c, /**< 3 channel signed half-float block-compressed (BC6H compression) format */
+    CU_AD_FORMAT_BC7_UNORM      = 0x9d, /**< 4 channel unsigned normalized block-compressed (BC7 compression) format */
+    CU_AD_FORMAT_BC7_UNORM_SRGB = 0x9e  /**< 4 channel unsigned normalized block-compressed (BC7 compression) format with sRGB encoding */
 } CUarray_format;
 
 /**
@@ -631,7 +662,7 @@ typedef enum CUdevice_attribute_enum {
     CU_DEVICE_ATTRIBUTE_VIRTUAL_MEMORY_MANAGEMENT_SUPPORTED = 102,         /**< Device supports virtual memory management APIs like ::cuMemAddressReserve, ::cuMemCreate, ::cuMemMap and related APIs */
     CU_DEVICE_ATTRIBUTE_HANDLE_TYPE_POSIX_FILE_DESCRIPTOR_SUPPORTED = 103,  /**< Device supports exporting memory to a posix file descriptor with ::cuMemExportToShareableHandle, if requested via ::cuMemCreate */
     CU_DEVICE_ATTRIBUTE_HANDLE_TYPE_WIN32_HANDLE_SUPPORTED = 104,           /**< Device supports exporting memory to a Win32 NT handle with ::cuMemExportToShareableHandle, if requested via ::cuMemCreate */
-    CU_DEVICE_ATTRIBUTE_HANDLE_TYPE_WIN32_KMT_HANDLE_SUPPORTED = 105,       /**< Device supports exporting memory to a Win32 KMT handle with ::cuMemExportToShareableHandle, if requested ::cuMemCreate */
+    CU_DEVICE_ATTRIBUTE_HANDLE_TYPE_WIN32_KMT_HANDLE_SUPPORTED = 105,       /**< Device supports exporting memory to a Win32 KMT handle with ::cuMemExportToShareableHandle, if requested via ::cuMemCreate */
     CU_DEVICE_ATTRIBUTE_MAX_BLOCKS_PER_MULTIPROCESSOR = 106,                /**< Maximum number of blocks per multiprocessor */
     CU_DEVICE_ATTRIBUTE_GENERIC_COMPRESSION_SUPPORTED = 107,                /**< Device supports compression of memory */
     CU_DEVICE_ATTRIBUTE_MAX_PERSISTING_L2_CACHE_SIZE = 108,                 /**< Maximum L2 persisting lines capacity setting in bytes. */
@@ -639,13 +670,19 @@ typedef enum CUdevice_attribute_enum {
     CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_WITH_CUDA_VMM_SUPPORTED = 110,      /**< Device supports specifying the GPUDirect RDMA flag with ::cuMemCreate */
     CU_DEVICE_ATTRIBUTE_RESERVED_SHARED_MEMORY_PER_BLOCK = 111,             /**< Shared memory reserved by CUDA driver per block in bytes */
     CU_DEVICE_ATTRIBUTE_SPARSE_CUDA_ARRAY_SUPPORTED = 112,                  /**< Device supports sparse CUDA arrays and sparse CUDA mipmapped arrays */
-    CU_DEVICE_ATTRIBUTE_READ_ONLY_HOST_REGISTER_SUPPORTED = 113,            /**< Device supports using the ::cuMemHostRegister flag CU_MEMHOSTERGISTER_READ_ONLY to register memory that must be mapped as read-only to the GPU */
+    CU_DEVICE_ATTRIBUTE_READ_ONLY_HOST_REGISTER_SUPPORTED = 113,            /**< Device supports using the ::cuMemHostRegister flag ::CU_MEMHOSTERGISTER_READ_ONLY to register memory that must be mapped as read-only to the GPU */
     CU_DEVICE_ATTRIBUTE_TIMELINE_SEMAPHORE_INTEROP_SUPPORTED = 114,         /**< External timeline semaphore interop is supported on the device */
     CU_DEVICE_ATTRIBUTE_MEMORY_POOLS_SUPPORTED = 115,                       /**< Device supports using the ::cuMemAllocAsync and ::cuMemPool family of APIs */
     CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_SUPPORTED = 116,                    /**< Device supports GPUDirect RDMA APIs, like nvidia_p2p_get_pages (see https://docs.nvidia.com/cuda/gpudirect-rdma for more information) */
     CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_FLUSH_WRITES_OPTIONS = 117,         /**< The returned attribute shall be interpreted as a bitmask, where the individual bits are described by the ::CUflushGPUDirectRDMAWritesOptions enum */
     CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_WRITES_ORDERING = 118,              /**< GPUDirect RDMA writes to the device do not need to be flushed for consumers within the scope indicated by the returned attribute. See ::CUGPUDirectRDMAWritesOrdering for the numerical values returned here. */
     CU_DEVICE_ATTRIBUTE_MEMPOOL_SUPPORTED_HANDLE_TYPES = 119,               /**< Handle types supported with mempool based IPC */
+
+
+
+
+    CU_DEVICE_ATTRIBUTE_DEFERRED_MAPPING_CUDA_ARRAY_SUPPORTED = 121,        /**< Device supports deferred mapping CUDA arrays and CUDA mipmapped arrays */
+
     CU_DEVICE_ATTRIBUTE_MAX
 } CUdevice_attribute;
 
@@ -763,6 +800,77 @@ typedef enum CUfunction_attribute_enum {
      * See ::cuFuncSetAttribute
      */
     CU_FUNC_ATTRIBUTE_PREFERRED_SHARED_MEMORY_CARVEOUT = 9,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     CU_FUNC_ATTRIBUTE_MAX
 } CUfunction_attribute;
@@ -1005,7 +1113,8 @@ typedef enum CUjit_option_enum
     CU_JIT_GLOBAL_SYMBOL_COUNT,
 
     /**
-     * Enable link-time optimization (-dlto) for device code (0: false, default)\n
+     * Enable link-time optimization (-dlto) for device code (0: false, default).\n
+     * This option is not supported on 32-bit platforms.\n
      * Option type: int\n
      * Applies to: compiler and linker
      */
@@ -1058,23 +1167,35 @@ typedef enum CUjit_option_enum
  */
 typedef enum CUjit_target_enum
 {
+
     CU_TARGET_COMPUTE_20 = 20,       /**< Compute device class 2.0 */
     CU_TARGET_COMPUTE_21 = 21,       /**< Compute device class 2.1 */
+
+
     CU_TARGET_COMPUTE_30 = 30,       /**< Compute device class 3.0 */
     CU_TARGET_COMPUTE_32 = 32,       /**< Compute device class 3.2 */
     CU_TARGET_COMPUTE_35 = 35,       /**< Compute device class 3.5 */
     CU_TARGET_COMPUTE_37 = 37,       /**< Compute device class 3.7 */
+
+
     CU_TARGET_COMPUTE_50 = 50,       /**< Compute device class 5.0 */
     CU_TARGET_COMPUTE_52 = 52,       /**< Compute device class 5.2 */
     CU_TARGET_COMPUTE_53 = 53,       /**< Compute device class 5.3 */
+
+
     CU_TARGET_COMPUTE_60 = 60,       /**< Compute device class 6.0.*/
     CU_TARGET_COMPUTE_61 = 61,       /**< Compute device class 6.1.*/
     CU_TARGET_COMPUTE_62 = 62,       /**< Compute device class 6.2.*/
+
+
     CU_TARGET_COMPUTE_70 = 70,       /**< Compute device class 7.0.*/
     CU_TARGET_COMPUTE_72 = 72,       /**< Compute device class 7.2.*/
+
     CU_TARGET_COMPUTE_75 = 75,       /**< Compute device class 7.5.*/
+
     CU_TARGET_COMPUTE_80 = 80,       /**< Compute device class 8.0.*/
     CU_TARGET_COMPUTE_86 = 86        /**< Compute device class 8.6.*/
+
 } CUjit_target;
 
 /**
@@ -1624,7 +1745,8 @@ typedef enum cudaError_enum {
     CUDA_ERROR_UNSUPPORTED_EXEC_AFFINITY      = 224,
 
     /**
-     * This indicates that the device kernel source is invalid.
+     * This indicates that the device kernel source is invalid. This includes
+     * compilation/linker errors encountered in device code or user error.
      */
     CUDA_ERROR_INVALID_SOURCE                 = 300,
 
@@ -1968,6 +2090,13 @@ typedef enum cudaError_enum {
      */
     CUDA_ERROR_EXTERNAL_DEVICE               = 911,
 
+
+
+
+
+
+
+
     /**
      * This indicates that an unknown internal error has occurred.
      */
@@ -1984,6 +2113,17 @@ typedef enum CUdevice_P2PAttribute_enum {
     CU_DEVICE_P2P_ATTRIBUTE_ACCESS_ACCESS_SUPPORTED              = 0x04,  /**< \deprecated use CU_DEVICE_P2P_ATTRIBUTE_CUDA_ARRAY_ACCESS_SUPPORTED instead */
     CU_DEVICE_P2P_ATTRIBUTE_CUDA_ARRAY_ACCESS_SUPPORTED          = 0x04   /**< Accessing CUDA arrays over the link supported */
 } CUdevice_P2PAttribute;
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * CUDA stream callback
@@ -2041,9 +2181,9 @@ typedef size_t (CUDA_CB *CUoccupancyB2DSize)(int blockSize);
  * On Windows the flag is a no-op.
  * On Linux that memory is marked as non cache-coherent for the GPU and
  * is expected to be physically contiguous. It may return
- * CUDA_ERROR_NOT_PERMITTED if run as an unprivileged user,
- * CUDA_ERROR_NOT_SUPPORTED on older Linux kernel versions.
- * On all other platforms, it is not supported and CUDA_ERROR_NOT_SUPPORTED
+ * ::CUDA_ERROR_NOT_PERMITTED if run as an unprivileged user,
+ * ::CUDA_ERROR_NOT_SUPPORTED on older Linux kernel versions.
+ * On all other platforms, it is not supported and ::CUDA_ERROR_NOT_SUPPORTED
  * is returned.
  * Flag for ::cuMemHostRegister()
  */
@@ -2052,12 +2192,12 @@ typedef size_t (CUDA_CB *CUoccupancyB2DSize)(int blockSize);
 /**
 * If set, the passed memory pointer is treated as pointing to memory that is
 * considered read-only by the device.  On platforms without
-* CU_DEVICE_ATTRIBUTE_PAGEABLE_MEMORY_ACCESS_USES_HOST_PAGE_TABLES, this flag is
+* ::CU_DEVICE_ATTRIBUTE_PAGEABLE_MEMORY_ACCESS_USES_HOST_PAGE_TABLES, this flag is
 * required in order to register memory mapped to the CPU as read-only.  Support
 * for the use of this flag can be queried from the device attribute
-* CU_DEVICE_ATTRIBUTE_READ_ONLY_HOST_REGISTER_SUPPORTED.  Using this flag with
+* ::CU_DEVICE_ATTRIBUTE_READ_ONLY_HOST_REGISTER_SUPPORTED.  Using this flag with
 * a current context associated with a device that does not have this attribute
-* set will cause ::cuMemHostRegister to error with CUDA_ERROR_NOT_SUPPORTED.
+* set will cause ::cuMemHostRegister to error with ::CUDA_ERROR_NOT_SUPPORTED.
 */
 #define CU_MEMHOSTREGISTER_READ_ONLY    0x08
 
@@ -2214,6 +2354,18 @@ typedef struct CUDA_ARRAY_SPARSE_PROPERTIES_st {
     unsigned int reserved[4];
 } CUDA_ARRAY_SPARSE_PROPERTIES_v1;
 typedef CUDA_ARRAY_SPARSE_PROPERTIES_v1 CUDA_ARRAY_SPARSE_PROPERTIES;
+
+
+/**
+ * CUDA array memory requirements
+ */
+typedef struct CUDA_ARRAY_MEMORY_REQUIREMENTS_st {
+    size_t size;                /**< Total required memory size */
+    size_t alignment;           /**< alignment requirement */
+    unsigned int reserved[4];
+} CUDA_ARRAY_MEMORY_REQUIREMENTS_v1;
+typedef CUDA_ARRAY_MEMORY_REQUIREMENTS_v1 CUDA_ARRAY_MEMORY_REQUIREMENTS;
+
 
 /**
  * CUDA Resource descriptor
@@ -2957,7 +3109,8 @@ typedef enum CUgraphExecUpdateResult_enum {
     CU_GRAPH_EXEC_UPDATE_ERROR_FUNCTION_CHANGED      = 0x4, /**< The update failed because the function of a kernel node changed (CUDA driver < 11.2) */
     CU_GRAPH_EXEC_UPDATE_ERROR_PARAMETERS_CHANGED    = 0x5, /**< The update failed because the parameters changed in a way that is not supported */
     CU_GRAPH_EXEC_UPDATE_ERROR_NOT_SUPPORTED         = 0x6, /**< The update failed because something about the node is not supported */
-    CU_GRAPH_EXEC_UPDATE_ERROR_UNSUPPORTED_FUNCTION_CHANGE = 0x7 /**< The update failed because the function of a kernel node changed in an unsupported way */
+    CU_GRAPH_EXEC_UPDATE_ERROR_UNSUPPORTED_FUNCTION_CHANGE = 0x7, /**< The update failed because the function of a kernel node changed in an unsupported way */
+    CU_GRAPH_EXEC_UPDATE_ERROR_ATTRIBUTES_CHANGED    = 0x8  /**< The update failed because the node attributes changed in a way that is not supported */
 } CUgraphExecUpdateResult;
 
 /**
@@ -3160,6 +3313,14 @@ typedef enum CUgraphMem_attribute_enum {
  */
 #define CUDA_ARRAY3D_SPARSE 0x40
 
+
+/**
+ * This flag if set indicates that the CUDA array or CUDA mipmapped array
+ * will allow deferred memory mapping
+ */
+#define CUDA_ARRAY3D_DEFERRED_MAPPING 0x80
+
+
 /**
  * Override the texref format with a format inferred from the array.
  * Flag for ::cuTexRefSetArray()
@@ -3190,6 +3351,12 @@ typedef enum CUgraphMem_attribute_enum {
   * Flag for ::cuTexRefSetFlags() and ::cuTexObjectCreate()
   */
 #define CU_TRSF_DISABLE_TRILINEAR_OPTIMIZATION  0x20
+
+/**
+ * Enable seamless cube map filtering.
+ * Flag for ::cuTexObjectCreate()
+ */
+#define CU_TRSF_SEAMLESS_CUBEMAP  0x40
 
 /**
  * End of array terminator for the \p extra parameter to
@@ -3305,6 +3472,52 @@ typedef enum CUuserObjectRetain_flags_enum {
 typedef enum CUgraphInstantiate_flags_enum {
     CUDA_GRAPH_INSTANTIATE_FLAG_AUTO_FREE_ON_LAUNCH  = 1  /**< Automatically free memory allocated in a graph before relaunching. */
 } CUgraphInstantiate_flags;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /** @} */ /* END CUDA_TYPES */
 
@@ -3708,117 +3921,117 @@ CUresult CUDAAPI cuDeviceGetTexture1DLinearMaxWidth(size_t *maxWidthInElements, 
  * \p dev. The supported attributes are:
  * - ::CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_BLOCK: Maximum number of threads per
  *   block;
- * - ::CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_X: Maximum x-dimension of a block;
- * - ::CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_Y: Maximum y-dimension of a block;
- * - ::CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_Z: Maximum z-dimension of a block;
- * - ::CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_X: Maximum x-dimension of a grid;
- * - ::CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Y: Maximum y-dimension of a grid;
- * - ::CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Z: Maximum z-dimension of a grid;
+ * - ::CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_X: Maximum x-dimension of a block
+ * - ::CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_Y: Maximum y-dimension of a block
+ * - ::CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_Z: Maximum z-dimension of a block
+ * - ::CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_X: Maximum x-dimension of a grid
+ * - ::CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Y: Maximum y-dimension of a grid
+ * - ::CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Z: Maximum z-dimension of a grid
  * - ::CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_BLOCK: Maximum amount of
- *   shared memory available to a thread block in bytes;
+ *   shared memory available to a thread block in bytes
  * - ::CU_DEVICE_ATTRIBUTE_TOTAL_CONSTANT_MEMORY: Memory available on device for
- *   __constant__ variables in a CUDA C kernel in bytes;
- * - ::CU_DEVICE_ATTRIBUTE_WARP_SIZE: Warp size in threads;
+ *   __constant__ variables in a CUDA C kernel in bytes
+ * - ::CU_DEVICE_ATTRIBUTE_WARP_SIZE: Warp size in threads
  * - ::CU_DEVICE_ATTRIBUTE_MAX_PITCH: Maximum pitch in bytes allowed by the
  *   memory copy functions that involve memory regions allocated through
- *   ::cuMemAllocPitch();
+ *   ::cuMemAllocPitch()
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_WIDTH: Maximum 1D
- *  texture width;
+ *  texture width
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_LINEAR_WIDTH: Maximum width
- *  for a 1D texture bound to linear memory;
+ *  for a 1D texture bound to linear memory
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_MIPMAPPED_WIDTH: Maximum
- *  mipmapped 1D texture width;
+ *  mipmapped 1D texture width
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_WIDTH: Maximum 2D
- *  texture width;
+ *  texture width
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_HEIGHT: Maximum 2D
- *  texture height;
+ *  texture height
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LINEAR_WIDTH: Maximum width
- *  for a 2D texture bound to linear memory;
+ *  for a 2D texture bound to linear memory
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LINEAR_HEIGHT: Maximum height
- *  for a 2D texture bound to linear memory;
+ *  for a 2D texture bound to linear memory
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LINEAR_PITCH: Maximum pitch
- *  in bytes for a 2D texture bound to linear memory;
+ *  in bytes for a 2D texture bound to linear memory
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_MIPMAPPED_WIDTH: Maximum
- *  mipmapped 2D texture width;
+ *  mipmapped 2D texture width
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_MIPMAPPED_HEIGHT: Maximum
- *  mipmapped 2D texture height;
+ *  mipmapped 2D texture height
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_WIDTH: Maximum 3D
- *  texture width;
+ *  texture width
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_HEIGHT: Maximum 3D
- *  texture height;
+ *  texture height
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_DEPTH: Maximum 3D
- *  texture depth;
+ *  texture depth
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_WIDTH_ALTERNATE:
  *  Alternate maximum 3D texture width, 0 if no alternate
- *  maximum 3D texture size is supported;
+ *  maximum 3D texture size is supported
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_HEIGHT_ALTERNATE:
  *  Alternate maximum 3D texture height, 0 if no alternate
- *  maximum 3D texture size is supported;
+ *  maximum 3D texture size is supported
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_DEPTH_ALTERNATE:
  *  Alternate maximum 3D texture depth, 0 if no alternate
- *  maximum 3D texture size is supported;
+ *  maximum 3D texture size is supported
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURECUBEMAP_WIDTH:
- *  Maximum cubemap texture width or height;
+ *  Maximum cubemap texture width or height
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_LAYERED_WIDTH:
- *  Maximum 1D layered texture width;
+ *  Maximum 1D layered texture width
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_LAYERED_LAYERS:
- *   Maximum layers in a 1D layered texture;
+ *   Maximum layers in a 1D layered texture
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_WIDTH:
- *  Maximum 2D layered texture width;
+ *  Maximum 2D layered texture width
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_HEIGHT:
- *   Maximum 2D layered texture height;
+ *   Maximum 2D layered texture height
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_LAYERS:
- *   Maximum layers in a 2D layered texture;
+ *   Maximum layers in a 2D layered texture
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURECUBEMAP_LAYERED_WIDTH:
- *   Maximum cubemap layered texture width or height;
+ *   Maximum cubemap layered texture width or height
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURECUBEMAP_LAYERED_LAYERS:
- *   Maximum layers in a cubemap layered texture;
+ *   Maximum layers in a cubemap layered texture
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE1D_WIDTH:
- *   Maximum 1D surface width;
+ *   Maximum 1D surface width
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_WIDTH:
- *   Maximum 2D surface width;
+ *   Maximum 2D surface width
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_HEIGHT:
- *   Maximum 2D surface height;
+ *   Maximum 2D surface height
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE3D_WIDTH:
- *   Maximum 3D surface width;
+ *   Maximum 3D surface width
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE3D_HEIGHT:
- *   Maximum 3D surface height;
+ *   Maximum 3D surface height
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE3D_DEPTH:
- *   Maximum 3D surface depth;
+ *   Maximum 3D surface depth
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE1D_LAYERED_WIDTH:
- *   Maximum 1D layered surface width;
+ *   Maximum 1D layered surface width
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE1D_LAYERED_LAYERS:
- *   Maximum layers in a 1D layered surface;
+ *   Maximum layers in a 1D layered surface
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_LAYERED_WIDTH:
- *   Maximum 2D layered surface width;
+ *   Maximum 2D layered surface width
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_LAYERED_HEIGHT:
- *   Maximum 2D layered surface height;
+ *   Maximum 2D layered surface height
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_LAYERED_LAYERS:
- *   Maximum layers in a 2D layered surface;
+ *   Maximum layers in a 2D layered surface
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACECUBEMAP_WIDTH:
- *   Maximum cubemap surface width;
+ *   Maximum cubemap surface width
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACECUBEMAP_LAYERED_WIDTH:
- *   Maximum cubemap layered surface width;
+ *   Maximum cubemap layered surface width
  * - ::CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACECUBEMAP_LAYERED_LAYERS:
- *   Maximum layers in a cubemap layered surface;
+ *   Maximum layers in a cubemap layered surface
  * - ::CU_DEVICE_ATTRIBUTE_MAX_REGISTERS_PER_BLOCK: Maximum number of 32-bit
- *   registers available to a thread block;
- * - ::CU_DEVICE_ATTRIBUTE_CLOCK_RATE: The typical clock frequency in kilohertz;
+ *   registers available to a thread block
+ * - ::CU_DEVICE_ATTRIBUTE_CLOCK_RATE: The typical clock frequency in kilohertz
  * - ::CU_DEVICE_ATTRIBUTE_TEXTURE_ALIGNMENT: Alignment requirement; texture
  *   base addresses aligned to ::textureAlign bytes do not need an offset
- *   applied to texture fetches;
+ *   applied to texture fetches
  * - ::CU_DEVICE_ATTRIBUTE_TEXTURE_PITCH_ALIGNMENT: Pitch alignment requirement
- *   for 2D texture references bound to pitched memory;
+ *   for 2D texture references bound to pitched memory
  * - ::CU_DEVICE_ATTRIBUTE_GPU_OVERLAP: 1 if the device can concurrently copy
- *   memory between host and device while executing a kernel, or 0 if not;
+ *   memory between host and device while executing a kernel, or 0 if not
  * - ::CU_DEVICE_ATTRIBUTE_MULTIPROCESSOR_COUNT: Number of multiprocessors on
- *   the device;
+ *   the device
  * - ::CU_DEVICE_ATTRIBUTE_KERNEL_EXEC_TIMEOUT: 1 if there is a run time limit
- *   for kernels executed on the device, or 0 if not;
+ *   for kernels executed on the device, or 0 if not
  * - ::CU_DEVICE_ATTRIBUTE_INTEGRATED: 1 if the device is integrated with the
- *   memory subsystem, or 0 if not;
+ *   memory subsystem, or 0 if not
  * - ::CU_DEVICE_ATTRIBUTE_CAN_MAP_HOST_MEMORY: 1 if the device can map host
- *   memory into the CUDA address space, or 0 if not;
+ *   memory into the CUDA address space, or 0 if not
  * - ::CU_DEVICE_ATTRIBUTE_COMPUTE_MODE: Compute mode that device is currently
  *   in. Available modes are as follows:
  *   - ::CU_COMPUTEMODE_DEFAULT: Default mode - Device is not restricted and
@@ -3831,33 +4044,33 @@ CUresult CUDAAPI cuDeviceGetTexture1DLinearMaxWidth(size_t *maxWidthInElements, 
  *   executing multiple kernels within the same context simultaneously, or 0 if
  *   not. It is not guaranteed that multiple kernels will be resident
  *   on the device concurrently so this feature should not be relied upon for
- *   correctness;
+ *   correctness.
  * - ::CU_DEVICE_ATTRIBUTE_ECC_ENABLED: 1 if error correction is enabled on the
- *    device, 0 if error correction is disabled or not supported by the device;
- * - ::CU_DEVICE_ATTRIBUTE_PCI_BUS_ID: PCI bus identifier of the device;
+ *    device, 0 if error correction is disabled or not supported by the device
+ * - ::CU_DEVICE_ATTRIBUTE_PCI_BUS_ID: PCI bus identifier of the device
  * - ::CU_DEVICE_ATTRIBUTE_PCI_DEVICE_ID: PCI device (also known as slot) identifier
- *   of the device;
+ *   of the device
  * - ::CU_DEVICE_ATTRIBUTE_PCI_DOMAIN_ID: PCI domain identifier of the device
  * - ::CU_DEVICE_ATTRIBUTE_TCC_DRIVER: 1 if the device is using a TCC driver. TCC
- *    is only available on Tesla hardware running Windows Vista or later;
- * - ::CU_DEVICE_ATTRIBUTE_MEMORY_CLOCK_RATE: Peak memory clock frequency in kilohertz;
- * - ::CU_DEVICE_ATTRIBUTE_GLOBAL_MEMORY_BUS_WIDTH: Global memory bus width in bits;
- * - ::CU_DEVICE_ATTRIBUTE_L2_CACHE_SIZE: Size of L2 cache in bytes. 0 if the device doesn't have L2 cache;
- * - ::CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_MULTIPROCESSOR: Maximum resident threads per multiprocessor;
+ *    is only available on Tesla hardware running Windows Vista or later
+ * - ::CU_DEVICE_ATTRIBUTE_MEMORY_CLOCK_RATE: Peak memory clock frequency in kilohertz
+ * - ::CU_DEVICE_ATTRIBUTE_GLOBAL_MEMORY_BUS_WIDTH: Global memory bus width in bits
+ * - ::CU_DEVICE_ATTRIBUTE_L2_CACHE_SIZE: Size of L2 cache in bytes. 0 if the device doesn't have L2 cache
+ * - ::CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_MULTIPROCESSOR: Maximum resident threads per multiprocessor
  * - ::CU_DEVICE_ATTRIBUTE_UNIFIED_ADDRESSING: 1 if the device shares a unified address space with
- *   the host, or 0 if not;
- * - ::CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR: Major compute capability version number;
- * - ::CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR: Minor compute capability version number;
+ *   the host, or 0 if not
+ * - ::CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR: Major compute capability version number
+ * - ::CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR: Minor compute capability version number
  * - ::CU_DEVICE_ATTRIBUTE_GLOBAL_L1_CACHE_SUPPORTED: 1 if device supports caching globals
- *    in L1 cache, 0 if caching globals in L1 cache is not supported by the device;
+ *    in L1 cache, 0 if caching globals in L1 cache is not supported by the device
  * - ::CU_DEVICE_ATTRIBUTE_LOCAL_L1_CACHE_SUPPORTED: 1 if device supports caching locals
- *    in L1 cache, 0 if caching locals in L1 cache is not supported by the device;
+ *    in L1 cache, 0 if caching locals in L1 cache is not supported by the device
  * - ::CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_MULTIPROCESSOR: Maximum amount of
  *   shared memory available to a multiprocessor in bytes; this amount is shared
- *   by all thread blocks simultaneously resident on a multiprocessor;
+ *   by all thread blocks simultaneously resident on a multiprocessor
  * - ::CU_DEVICE_ATTRIBUTE_MAX_REGISTERS_PER_MULTIPROCESSOR: Maximum number of 32-bit
  *   registers available to a multiprocessor; this number is shared by all thread
- *   blocks simultaneously resident on a multiprocessor;
+ *   blocks simultaneously resident on a multiprocessor
  * - ::CU_DEVICE_ATTRIBUTE_MANAGED_MEMORY: 1 if device supports allocating managed memory
  *   on this system, 0 if allocating managed memory is not supported by the device on this system.
  * - ::CU_DEVICE_ATTRIBUTE_MULTI_GPU_BOARD: 1 if device is on a multi-GPU board, 0 if not.
@@ -3883,14 +4096,23 @@ CUresult CUDAAPI cuDeviceGetTexture1DLinearMaxWidth(size_t *maxWidthInElements, 
  * - ::CU_DEVICE_ATTRIBUTE_VIRTUAL_MEMORY_MANAGEMENT_SUPPORTED:  Device supports virtual memory management APIs like ::cuMemAddressReserve, ::cuMemCreate, ::cuMemMap and related APIs
  * - ::CU_DEVICE_ATTRIBUTE_HANDLE_TYPE_POSIX_FILE_DESCRIPTOR_SUPPORTED: Device supports exporting memory to a posix file descriptor with ::cuMemExportToShareableHandle, if requested via ::cuMemCreate
  * - ::CU_DEVICE_ATTRIBUTE_HANDLE_TYPE_WIN32_HANDLE_SUPPORTED:  Device supports exporting memory to a Win32 NT handle with ::cuMemExportToShareableHandle, if requested via ::cuMemCreate
- * - ::CU_DEVICE_ATTRIBUTE_HANDLE_TYPE_WIN32_KMT_HANDLE_SUPPORTED: Device supports exporting memory to a Win32 KMT handle with ::cuMemExportToShareableHandle, if requested ::cuMemCreate
- * - ::CU_DEVICE_ATTRIBUTE_MAX_PERSISTING_L2_CACHE_SIZE: Maximum L2 persisting lines capacity setting in bytes.
- * - ::CU_DEVICE_ATTRIBUTE_MAX_ACCESS_POLICY_WINDOW_SIZE: Maximum value of CUaccessPolicyWindow::num_bytes. 
- * - ::CU_DEVICE_ATTRIBUTE_MAX_BLOCKS_PER_MULTIPROCESSOR: Maximum number of thread blocks that can reside on a multiprocessor.
+ * - ::CU_DEVICE_ATTRIBUTE_HANDLE_TYPE_WIN32_KMT_HANDLE_SUPPORTED: Device supports exporting memory to a Win32 KMT handle with ::cuMemExportToShareableHandle, if requested via ::cuMemCreate
+ * - ::CU_DEVICE_ATTRIBUTE_MAX_BLOCKS_PER_MULTIPROCESSOR: Maximum number of thread blocks that can reside on a multiprocessor
  * - ::CU_DEVICE_ATTRIBUTE_GENERIC_COMPRESSION_SUPPORTED: Device supports compressible memory allocation via ::cuMemCreate
- * - ::CU_DEVICE_ATTRIBUTE_RESERVED_SHARED_MEMORY_PER_BLOCK: Amount of shared memory per block reserved by CUDA driver in bytes.
- * - ::CU_DEVICE_ATTRIBUTE_READ_ONLY_HOST_REGISTER_SUPPORTED: Device supports using the ::cuMemHostRegister flag CU_MEMHOSTERGISTER_READ_ONLY to register memory that must be mapped as read-only to the GPU
+ * - ::CU_DEVICE_ATTRIBUTE_MAX_PERSISTING_L2_CACHE_SIZE: Maximum L2 persisting lines capacity setting in bytes
+ * - ::CU_DEVICE_ATTRIBUTE_MAX_ACCESS_POLICY_WINDOW_SIZE: Maximum value of CUaccessPolicyWindow::num_bytes 
+ * - ::CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_WITH_CUDA_VMM_SUPPORTED: Device supports specifying the GPUDirect RDMA flag with ::cuMemCreate.
+ * - ::CU_DEVICE_ATTRIBUTE_RESERVED_SHARED_MEMORY_PER_BLOCK: Amount of shared memory per block reserved by CUDA driver in bytes
+ * - ::CU_DEVICE_ATTRIBUTE_SPARSE_CUDA_ARRAY_SUPPORTED: Device supports sparse CUDA arrays and sparse CUDA mipmapped arrays. 
+ * - ::CU_DEVICE_ATTRIBUTE_READ_ONLY_HOST_REGISTER_SUPPORTED: Device supports using the ::cuMemHostRegister flag ::CU_MEMHOSTERGISTER_READ_ONLY to register memory that must be mapped as read-only to the GPU
  * - ::CU_DEVICE_ATTRIBUTE_MEMORY_POOLS_SUPPORTED: Device supports using the ::cuMemAllocAsync and ::cuMemPool family of APIs
+ * - ::CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_SUPPORTED: Device supports GPUDirect RDMA APIs, like nvidia_p2p_get_pages (see https://docs.nvidia.com/cuda/gpudirect-rdma for more information)
+ * - ::CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_FLUSH_WRITES_OPTIONS: The returned attribute shall be interpreted as a bitmask, where the individual bits are described by the ::CUflushGPUDirectRDMAWritesOptions enum
+ * - ::CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_WRITES_ORDERING: GPUDirect RDMA writes to the device do not need to be flushed for consumers within the scope indicated by the returned attribute. See ::CUGPUDirectRDMAWritesOrdering for the numerical values returned here.
+ * - ::CU_DEVICE_ATTRIBUTE_MEMPOOL_SUPPORTED_HANDLE_TYPES: Bitmask of handle types supported with mempool based IPC
+
+ * - ::CU_DEVICE_ATTRIBUTE_DEFERRED_MAPPING_CUDA_ARRAY_SUPPORTED: Device supports deferred mapping CUDA arrays and CUDA mipmapped arrays.
+
  *
  * \param pi     - Returned device attribute value
  * \param attrib - Device attribute to query
@@ -4657,6 +4879,13 @@ CUresult CUDAAPI cuCtxCreate_v3(CUcontext *pctx, CUexecAffinityParam *paramsArra
  * It is the responsibility of the calling function to ensure that no API
  * call issues using \p ctx while ::cuCtxDestroy() is executing.
  *
+ * Destroys and cleans up all resources associated with the context.
+ * It is the caller's responsibility to ensure that the context or its resources
+ * are not accessed or passed in subsequent API calls and doing so will result in undefined behavior.
+ * These resources include CUDA types such as ::CUmodule, ::CUfunction, ::CUstream, ::CUevent,
+ * ::CUarray, ::CUmipmappedArray, ::CUtexObject, ::CUsurfObject, ::CUtexref, ::CUsurfref,
+ * ::CUgraphicsResource, ::CUlinkState, ::CUexternalMemory and ::CUexternalSemaphore.
+ *
  * If \p ctx is current to the calling thread then \p ctx will also be
  * popped from the current thread's context stack (as though ::cuCtxPopCurrent()
  * were called).  If \p ctx is current to other threads, then \p ctx will
@@ -4732,7 +4961,7 @@ CUresult CUDAAPI cuCtxPushCurrent(CUcontext ctx);
  * ::cuCtxPushCurrent() was called, this function makes that context current to
  * the CPU thread again.
  *
- * \param pctx - Returned new context handle
+ * \param pctx - Returned popped context handle
  *
  * \return
  * ::CUDA_SUCCESS,
@@ -5632,6 +5861,7 @@ CUresult CUDAAPI cuModuleLoadFatBinary(CUmodule *module, const void *fatCubin);
  * ::CUDA_ERROR_INVALID_CONTEXT,
  * ::CUDA_ERROR_INVALID_VALUE
  * \notefnerr
+ * \note_destroy_ub
  *
  * \sa ::cuModuleGetFunction,
  * ::cuModuleGetGlobal,
@@ -5963,7 +6193,6 @@ cuLinkDestroy(CUlinkState state);
  * The integrated GPU on Tegra shares memory with CPU and other component
  * of the SoC. The free and total values returned by the API excludes
  * the SWAP memory space maintained by the OS on some platforms.
- *
  * The OS may move some of the memory pages into swap area as the GPU or
  * CPU allocate or access memory. See Tegra app note on how to calculate
  * total and free memory on Tegra.
@@ -6332,7 +6561,7 @@ CUresult CUDAAPI cuMemHostAlloc(void **pp, size_t bytesize, unsigned int Flags);
  * but it will be suitable for use on all devices provided Unified Virtual Addressing
  * is enabled. In such systems, it is valid to access the memory using either pointer
  * on devices that have a non-zero value for the device attribute. Note however that
- * such devices should access the memory using only of the two pointers and not both.
+ * such devices should access the memory using only one of the two pointers and not both.
  *
  * \p Flags provides for future releases. For now, it must be set to 0.
  *
@@ -6810,10 +7039,10 @@ CUresult CUDAAPI cuIpcCloseMemHandle(CUdeviceptr dptr);
  *
  * - ::CU_MEMHOSTREGISTER_READ_ONLY: The pointer is treated as pointing to memory
  *   that is considered read-only by the device.  On platforms without
- *   CU_DEVICE_ATTRIBUTE_PAGEABLE_MEMORY_ACCESS_USES_HOST_PAGE_TABLES, this flag is
+ *   ::CU_DEVICE_ATTRIBUTE_PAGEABLE_MEMORY_ACCESS_USES_HOST_PAGE_TABLES, this flag is
  *   required in order to register memory mapped to the CPU as read-only.  Support
  *   for the use of this flag can be queried from the device attribute
- *   CU_DEVICE_ATTRIBUTE_READ_ONLY_HOST_REGISTER_SUPPORTED.  Using this flag with
+ *   ::CU_DEVICE_ATTRIBUTE_READ_ONLY_HOST_REGISTER_SUPPORTED.  Using this flag with
  *   a current context associated with a device that does not have this attribute
  *   set will cause ::cuMemHostRegister to error with CUDA_ERROR_NOT_SUPPORTED.
  *
@@ -8958,7 +9187,7 @@ CUresult CUDAAPI cuMemsetD2D32Async(CUdeviceptr dstDevice, size_t dstPitch, unsi
  * float16's:
  * \code
     CUDA_ARRAY_DESCRIPTOR desc;
-    desc.FormatFlags = CU_AD_FORMAT_HALF;
+    desc.Format = CU_AD_FORMAT_HALF;
     desc.NumChannels = 4;
     desc.Width = width;
     desc.Height = height;
@@ -8968,7 +9197,7 @@ CUresult CUDAAPI cuMemsetD2D32Async(CUdeviceptr dstDevice, size_t dstPitch, unsi
  * of which is two 8-bit unsigned chars:
  * \code
     CUDA_ARRAY_DESCRIPTOR arrayDesc;
-    desc.FormatFlags = CU_AD_FORMAT_UNSIGNED_INT8;
+    desc.Format = CU_AD_FORMAT_UNSIGNED_INT8;
     desc.NumChannels = 2;
     desc.Width = width;
     desc.Height = height;
@@ -9083,6 +9312,55 @@ CUresult CUDAAPI cuArrayGetSparseProperties(CUDA_ARRAY_SPARSE_PROPERTIES *sparse
  * \sa ::cuArrayGetSparseProperties, ::cuMemMapArrayAsync
  */
 CUresult CUDAAPI cuMipmappedArrayGetSparseProperties(CUDA_ARRAY_SPARSE_PROPERTIES *sparseProperties, CUmipmappedArray mipmap);
+
+
+/**
+ * \brief Returns the memory requirements of a CUDA array
+ *
+ * Returns the memory requirements of a CUDA array in \p memoryRequirements
+ * If the CUDA array is not allocated with flag ::CUDA_ARRAY3D_DEFERRED_MAPPING
+ * ::CUDA_ERROR_INVALID_VALUE will be returned.
+ *
+ * The returned value in ::CUDA_ARRAY_MEMORY_REQUIREMENTS::size 
+ * represents the total size of the CUDA array.
+ * The returned value in ::CUDA_ARRAY_MEMORY_REQUIREMENTS::alignment 
+ * represents the alignment necessary for mapping the CUDA array.
+ *
+ * \return
+ * ::CUDA_SUCCESS
+ * ::CUDA_ERROR_INVALID_VALUE
+ *
+ * \param[out] memoryRequirements - Pointer to ::CUDA_ARRAY_MEMORY_REQUIREMENTS
+ * \param[in] array - CUDA array to get the memory requirements of
+ * \param[in] device - Device to get the memory requirements for
+ * \sa ::cuMipmappedArrayGetMemoryRequirements, ::cuMemMapArrayAsync
+ */
+CUresult CUDAAPI cuArrayGetMemoryRequirements(CUDA_ARRAY_MEMORY_REQUIREMENTS *memoryRequirements, CUarray array, CUdevice device);
+ 
+/**
+ * \brief Returns the memory requirements of a CUDA mipmapped array
+ *
+ * Returns the memory requirements of a CUDA mipmapped array in \p memoryRequirements
+ * If the CUDA mipmapped array is not allocated with flag ::CUDA_ARRAY3D_DEFERRED_MAPPING
+ * ::CUDA_ERROR_INVALID_VALUE will be returned.
+ *
+ * The returned value in ::CUDA_ARRAY_MEMORY_REQUIREMENTS::size 
+ * represents the total size of the CUDA mipmapped array.
+ * The returned value in ::CUDA_ARRAY_MEMORY_REQUIREMENTS::alignment 
+ * represents the alignment necessary for mapping the CUDA mipmapped  
+ * array.
+ *
+ * \return
+ * ::CUDA_SUCCESS
+ * ::CUDA_ERROR_INVALID_VALUE
+ *
+ * \param[out] memoryRequirements - Pointer to ::CUDA_ARRAY_MEMORY_REQUIREMENTS
+ * \param[in] mipmap - CUDA mipmapped array to get the memory requirements of
+ * \param[in] device - Device to get the memory requirements for
+ * \sa ::cuArrayGetMemoryRequirements, ::cuMemMapArrayAsync
+ */
+CUresult CUDAAPI cuMipmappedArrayGetMemoryRequirements(CUDA_ARRAY_MEMORY_REQUIREMENTS *memoryRequirements, CUmipmappedArray mipmap, CUdevice device);
+
 
 /**
  * \brief Gets a CUDA array plane from a CUDA array
@@ -9294,7 +9572,7 @@ CUresult CUDAAPI cuArrayDestroy(CUarray hArray);
  * 4x16-bit float16's:
  * \code
     CUDA_ARRAY3D_DESCRIPTOR desc;
-    desc.FormatFlags = CU_AD_FORMAT_HALF;
+    desc.Format = CU_AD_FORMAT_HALF;
     desc.NumChannels = 4;
     desc.Width = width;
     desc.Height = height;
@@ -9786,12 +10064,18 @@ CUresult CUDAAPI cuMemMap(CUdeviceptr ptr, size_t size, size_t offset, CUmemGene
  * If ::CUarrayMapInfo::resourceType is set to ::CUresourcetype::CU_RESOURCE_TYPE_ARRAY then 
  * ::CUarrayMapInfo::resource::array must be set to a valid sparse CUDA array handle.
  * The CUDA array must be either a 2D, 2D layered or 3D CUDA array and must have been allocated using
- * ::cuArrayCreate or ::cuArray3DCreate with the flag ::CUDA_ARRAY3D_SPARSE. 
+ * ::cuArrayCreate or ::cuArray3DCreate with the flag ::CUDA_ARRAY3D_SPARSE
+
+ * or ::CUDA_ARRAY3D_DEFERRED_MAPPING.
+
  * For CUDA arrays obtained using ::cuMipmappedArrayGetLevel, ::CUDA_ERROR_INVALID_VALUE will be returned.
  * If ::CUarrayMapInfo::resourceType is set to ::CUresourcetype::CU_RESOURCE_TYPE_MIPMAPPED_ARRAY 
  * then ::CUarrayMapInfo::resource::mipmap must be set to a valid sparse CUDA mipmapped array handle.
  * The CUDA mipmapped array must be either a 2D, 2D layered or 3D CUDA mipmapped array and must have been
- * allocated using ::cuMipmappedArrayCreate with the flag ::CUDA_ARRAY3D_SPARSE.
+ * allocated using ::cuMipmappedArrayCreate with the flag ::CUDA_ARRAY3D_SPARSE
+
+ * or ::CUDA_ARRAY3D_DEFERRED_MAPPING.
+
  *
  * ::CUarrayMapInfo::subresourceType specifies the type of subresource within the resource. 
  * ::CUarraySparseSubresourceType_enum is defined as:
@@ -9829,7 +10113,12 @@ CUresult CUDAAPI cuMemMap(CUdeviceptr ptr, size_t size, size_t offset, CUmemGene
  * For layered CUDA mipmapped arrays which don't have the flag ::CU_ARRAY_SPARSE_PROPERTIES_SINGLE_MIPTAIL set in ::CUDA_ARRAY_SPARSE_PROPERTIES::flags
  * as returned by ::cuMipmappedArrayGetSparseProperties, ::CUarrayMapInfo::subresource::miptail::layer must specify a valid layer index.
  * Otherwise, must be zero.
- * 
+ *
+
+ * If ::CUarrayMapInfo::resource::array or ::CUarrayMapInfo::resource::mipmap was created with ::CUDA_ARRAY3D_DEFERRED_MAPPING
+ * flag set the ::CUarrayMapInfo::subresourceType and the contents of ::CUarrayMapInfo::subresource will be ignored.
+ *
+
  * ::CUarrayMapInfo::memOperationType specifies the type of operation. ::CUmemOperationType is defined as:
  \code
     typedef enum CUmemOperationType_enum {
@@ -13470,6 +13759,13 @@ CUresult CUDAAPI cuLaunchKernel(CUfunction f,
                                 void **kernelParams,
                                 void **extra);
 
+
+
+
+
+
+
+
 /**
  * \brief Launches a CUDA function where thread blocks can cooperate and synchronize as they execute
  *
@@ -15151,7 +15447,7 @@ CUresult CUDAAPI cuGraphExternalSemaphoresWaitNodeSetParams(CUgraphNode hNode, c
  * \param nodeParams      - Parameters for the node
  *
  * When ::cuGraphAddMemAllocNode creates an allocation node, it returns the address of the allocation in
- * \param nodeParams.dptr.  The allocation's address remains fixed across instantiations and launches.
+ * \p nodeParams.dptr.  The allocation's address remains fixed across instantiations and launches.
  *
  * If the allocation is freed in the same graph, by creating a free node using ::cuGraphAddMemFreeNode,
  * the allocation can be accessed by nodes ordered after the allocation node but before the free node.
@@ -15327,7 +15623,9 @@ CUresult CUDAAPI cuGraphMemFreeNodeGetParams(CUgraphNode hNode, CUdeviceptr *dpt
  *
  * \sa
  * ::cuGraphAddMemAllocNode,
- * ::cuGraphAddMemFreeNode
+ * ::cuGraphAddMemFreeNode,
+ * ::cuDeviceSetGraphMemAttribute,
+ * ::cuDeviceGetGraphMemAttribute
  */
 CUresult CUDAAPI cuDeviceGraphMemTrim(CUdevice device);
 
@@ -15353,6 +15651,7 @@ CUresult CUDAAPI cuDeviceGraphMemTrim(CUdevice device);
  * ::CUDA_ERROR_INVALID_DEVICE
  *
  * \sa
+ * ::cuDeviceSetGraphMemAttribute,
  * ::cuGraphAddMemAllocNode,
  * ::cuGraphAddMemFreeNode
  */
@@ -15377,6 +15676,7 @@ CUresult CUDAAPI cuDeviceGetGraphMemAttribute(CUdevice device, CUgraphMem_attrib
  * ::CUDA_ERROR_INVALID_DEVICE
  *
  * \sa
+ * ::cuDeviceGetGraphMemAttribute,
  * ::cuGraphAddMemAllocNode,
  * ::cuGraphAddMemFreeNode
  */
@@ -15798,9 +16098,12 @@ CUresult CUDAAPI cuGraphInstantiateWithFlags(CUgraphExec *phGraphExec, CUgraph h
  * The node is identified by the corresponding node \p hNode in the 
  * non-executable graph, from which the executable graph was instantiated. 
  *
- * \p hNode must not have been removed from the original graph. The \p func field 
- * of \p nodeParams cannot be modified and must match the original value.
- * All other values can be modified. 
+ * \p hNode must not have been removed from the original graph. All \p nodeParams 
+ * fields may change, but the following restrictions apply to \p func updates: 
+ *
+ *   - The owning context of the function cannot change.
+ *   - A node whose function originally did not use CUDA dynamic parallelism cannot be updated
+ *     to a function which uses CDP
  *
  * The modifications only affect future launches of \p hGraphExec. Already 
  * enqueued or running launches of \p hGraphExec are not affected by this call. 
@@ -16171,6 +16474,72 @@ CUresult CUDAAPI cuGraphExecExternalSemaphoresSignalNodeSetParams(CUgraphExec hG
 CUresult CUDAAPI cuGraphExecExternalSemaphoresWaitNodeSetParams(CUgraphExec hGraphExec, CUgraphNode hNode, const CUDA_EXT_SEM_WAIT_NODE_PARAMS *nodeParams);
 
 /**
+ * \brief Enables or disables the specified node in the given graphExec
+ *
+ * Sets \p hNode to be either enabled or disabled. Disabled nodes are functionally equivalent 
+ * to empty nodes until they are reenabled. Existing node parameters are not affected by 
+ * disabling/enabling the node.
+ *  
+ * The node is identified by the corresponding node \p hNode in the non-executable 
+ * graph, from which the executable graph was instantiated.   
+ *
+ * \p hNode must not have been removed from the original graph.
+ *
+ * The modifications only affect future launches of \p hGraphExec. Already
+ * enqueued or running launches of \p hGraphExec are not affected by this call.
+ * \p hNode is also not modified by this call.
+ *
+ * \note Currently only kernel nodes are supported. 
+ *
+ * \param hGraphExec - The executable graph in which to set the specified node
+ * \param hNode      - Node from the graph from which graphExec was instantiated
+ * \param isEnabled  - Node is enabled if != 0, otherwise the node is disabled
+ *
+ * \return
+ * ::CUDA_SUCCESS,
+ * ::CUDA_ERROR_INVALID_VALUE,
+ * \note_graph_thread_safety
+ * \notefnerr
+ *
+ * \sa
+ * ::cuGraphNodeGetEnabled,
+ * ::cuGraphExecUpdate,
+ * ::cuGraphInstantiate
+ * ::cuGraphLaunch
+ */
+CUresult CUDAAPI cuGraphNodeSetEnabled(CUgraphExec hGraphExec, CUgraphNode hNode, unsigned int isEnabled);
+
+/**
+ * \brief Query whether a node in the given graphExec is enabled
+ *
+ * Sets isEnabled to 1 if \p hNode is enabled, or 0 if \p hNode is disabled.
+ *
+ * The node is identified by the corresponding node \p hNode in the non-executable 
+ * graph, from which the executable graph was instantiated.   
+ *
+ * \p hNode must not have been removed from the original graph.
+ *
+ * \note Currently only kernel nodes are supported. 
+ *
+ * \param hGraphExec - The executable graph in which to set the specified node
+ * \param hNode      - Node from the graph from which graphExec was instantiated
+ * \param isEnabled  - Location to return the enabled status of the node
+ *
+ * \return
+ * ::CUDA_SUCCESS,
+ * ::CUDA_ERROR_INVALID_VALUE,
+ * \note_graph_thread_safety
+ * \notefnerr
+ *
+ * \sa
+ * ::cuGraphNodeSetEnabled,
+ * ::cuGraphExecUpdate,
+ * ::cuGraphInstantiate
+ * ::cuGraphLaunch
+ */
+CUresult CUDAAPI cuGraphNodeGetEnabled(CUgraphExec hGraphExec, CUgraphNode hNode, unsigned int *isEnabled);
+
+/**
  * \brief Uploads an executable graph in a stream
  *
  * Uploads \p hGraphExec to the device in \p hStream without executing it. Uploads of
@@ -16282,7 +16651,8 @@ CUresult CUDAAPI cuGraphDestroy(CUgraph hGraph);
  * - Kernel nodes:
  *   - The owning context of the function cannot change.
  *   - A node whose function originally did not use CUDA dynamic parallelism cannot be updated
- *     to a function which uses CDP
+ *     to a function which uses CDP.
+ *   - A cooperative node cannot be updated to a non-cooperative node, and vice-versa.
  * - Memset and memcpy nodes:
  *   - The CUDA device(s) to which the operand(s) was allocated/mapped cannot change.
  *   - The source/destination memory must be allocated from the same contexts as the original
@@ -16315,6 +16685,8 @@ CUresult CUDAAPI cuGraphDestroy(CUgraph hGraph);
  * - CU_GRAPH_EXEC_UPDATE_ERROR_UNSUPPORTED_FUNCTION_CHANGE if the function changed in an unsupported
  *   way(see note above), in which case \p hErrorNode_out is set to the node from \p hGraph
  * - CU_GRAPH_EXEC_UPDATE_ERROR_PARAMETERS_CHANGED if any parameters to a node changed in a way 
+ *   that is not supported, in which case \p hErrorNode_out is set to the node from \p hGraph.
+ * - CU_GRAPH_EXEC_UPDATE_ERROR_ATTRIBUTES_CHANGED if any attributes of a node changed in a way
  *   that is not supported, in which case \p hErrorNode_out is set to the node from \p hGraph.
  * - CU_GRAPH_EXEC_UPDATE_ERROR_NOT_SUPPORTED if something about a node is unsupported, like 
  *   the node's type or configuration, in which case \p hErrorNode_out is set to the node from \p hGraph
@@ -17857,6 +18229,15 @@ __CUDA_DEPRECATED CUresult CUDAAPI cuSurfRefGetArray(CUarray *phArray, CUsurfref
  *   filtering optimizations. Trilinear optimizations improve texture filtering
  *   performance by allowing bilinear filtering on textures in scenarios where
  *   it can closely approximate the expected results.
+ *   - ::CU_TRSF_SEAMLESS_CUBEMAP, which enables seamless cube map filtering. 
+ *   This flag can only be specified if the underlying resource is a CUDA array 
+ *   or a CUDA mipmapped array that was created with the flag ::CUDA_ARRAY3D_CUBEMAP.
+ *   When seamless cube map filtering is enabled, texture address modes specified 
+ *   by ::CUDA_TEXTURE_DESC::addressMode are ignored. Instead, if the ::CUDA_TEXTURE_DESC::filterMode 
+ *   is set to ::CU_TR_FILTER_MODE_POINT the address mode ::CU_TR_ADDRESS_MODE_CLAMP 
+ *   will be applied for all dimensions. If the ::CUDA_TEXTURE_DESC::filterMode is 
+ *   set to ::CU_TR_FILTER_MODE_LINEAR seamless cube map filtering will be performed
+ *   when sampling along the cube face borders.
  *
  * - ::CUDA_TEXTURE_DESC::maxAnisotropy specifies the maximum anisotropy ratio to be used when doing anisotropic filtering. This value will be
  *   clamped to the range [1,16].
@@ -18682,6 +19063,9 @@ CUresult CUDAAPI cuGetExportTable(const void **ppExportTable, const CUuuid *pExp
     #undef cuEventRecord
     #undef cuEventRecordWithFlags
     #undef cuLaunchKernel
+
+
+
     #undef cuLaunchHostFunc
     #undef cuGraphicsMapResources
     #undef cuGraphicsUnmapResources
@@ -18900,6 +19284,9 @@ CUresult CUDAAPI cuGetExportTable(const void **ppExportTable, const CUuuid *pExp
     CUresult CUDAAPI cuEventRecord(CUevent hEvent, CUstream hStream);
     CUresult CUDAAPI cuEventRecordWithFlags(CUevent hEvent, CUstream hStream, unsigned int flags);
     CUresult CUDAAPI cuLaunchKernel(CUfunction f, unsigned int gridDimX, unsigned int gridDimY, unsigned int gridDimZ, unsigned int blockDimX, unsigned int blockDimY, unsigned int blockDimZ, unsigned int sharedMemBytes, CUstream hStream, void **kernelParams, void **extra);
+
+
+
     CUresult CUDAAPI cuLaunchHostFunc(CUstream hStream, CUhostFn fn, void *userData);
     CUresult CUDAAPI cuGraphicsMapResources(unsigned int count, CUgraphicsResource *resources, CUstream hStream);
     CUresult CUDAAPI cuGraphicsUnmapResources(unsigned int count, CUgraphicsResource *resources, CUstream hStream);

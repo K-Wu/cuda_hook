@@ -24,7 +24,7 @@ struct dim3 {
 };
 
 typedef struct dim3 dim3;
-
+// now begins the deriver_types.h 
 /**
  * CUDA error types
  */
@@ -901,7 +901,34 @@ enum cudaChannelFormatKind {
     cudaChannelFormatKindUnsigned = 1, /**< Unsigned channel format */
     cudaChannelFormatKindFloat = 2,    /**< Float channel format */
     cudaChannelFormatKindNone = 3,     /**< No channel format */
-    cudaChannelFormatKindNV12 = 4
+    cudaChannelFormatKindNV12 = 4,    
+    cudaChannelFormatKindUnsignedNormalized8X1          =   5,      /**< 1 channel unsigned 8-bit normalized integer */
+    cudaChannelFormatKindUnsignedNormalized8X2          =   6,      /**< 2 channel unsigned 8-bit normalized integer */
+    cudaChannelFormatKindUnsignedNormalized8X4          =   7,      /**< 4 channel unsigned 8-bit normalized integer */
+    cudaChannelFormatKindUnsignedNormalized16X1         =   8,      /**< 1 channel unsigned 16-bit normalized integer */
+    cudaChannelFormatKindUnsignedNormalized16X2         =   9,      /**< 2 channel unsigned 16-bit normalized integer */
+    cudaChannelFormatKindUnsignedNormalized16X4         =   10,     /**< 4 channel unsigned 16-bit normalized integer */
+    cudaChannelFormatKindSignedNormalized8X1            =   11,     /**< 1 channel signed 8-bit normalized integer */
+    cudaChannelFormatKindSignedNormalized8X2            =   12,     /**< 2 channel signed 8-bit normalized integer */
+    cudaChannelFormatKindSignedNormalized8X4            =   13,     /**< 4 channel signed 8-bit normalized integer */
+    cudaChannelFormatKindSignedNormalized16X1           =   14,     /**< 1 channel signed 16-bit normalized integer */
+    cudaChannelFormatKindSignedNormalized16X2           =   15,     /**< 2 channel signed 16-bit normalized integer */
+    cudaChannelFormatKindSignedNormalized16X4           =   16,     /**< 4 channel signed 16-bit normalized integer */
+    cudaChannelFormatKindUnsignedBlockCompressed1       =   17,     /**< 4 channel unsigned normalized block-compressed (BC1 compression) format */
+    cudaChannelFormatKindUnsignedBlockCompressed1SRGB   =   18,     /**< 4 channel unsigned normalized block-compressed (BC1 compression) format with sRGB encoding*/
+    cudaChannelFormatKindUnsignedBlockCompressed2       =   19,     /**< 4 channel unsigned normalized block-compressed (BC2 compression) format */
+    cudaChannelFormatKindUnsignedBlockCompressed2SRGB   =   20,     /**< 4 channel unsigned normalized block-compressed (BC2 compression) format with sRGB encoding */
+    cudaChannelFormatKindUnsignedBlockCompressed3       =   21,     /**< 4 channel unsigned normalized block-compressed (BC3 compression) format */
+    cudaChannelFormatKindUnsignedBlockCompressed3SRGB   =   22,     /**< 4 channel unsigned normalized block-compressed (BC3 compression) format with sRGB encoding */
+    cudaChannelFormatKindUnsignedBlockCompressed4       =   23,     /**< 1 channel unsigned normalized block-compressed (BC4 compression) format */
+    cudaChannelFormatKindSignedBlockCompressed4         =   24,     /**< 1 channel signed normalized block-compressed (BC4 compression) format */
+    cudaChannelFormatKindUnsignedBlockCompressed5       =   25,     /**< 2 channel unsigned normalized block-compressed (BC5 compression) format */
+    cudaChannelFormatKindSignedBlockCompressed5         =   26,     /**< 2 channel signed normalized block-compressed (BC5 compression) format */
+    cudaChannelFormatKindUnsignedBlockCompressed6H      =   27,     /**< 3 channel unsigned half-float block-compressed (BC6H compression) format */
+    cudaChannelFormatKindSignedBlockCompressed6H        =   28,     /**< 3 channel signed half-float block-compressed (BC6H compression) format */
+    cudaChannelFormatKindUnsignedBlockCompressed7       =   29,     /**< 4 channel unsigned normalized block-compressed (BC7 compression) format */
+    cudaChannelFormatKindUnsignedBlockCompressed7SRGB   =   30      /**< 4 channel unsigned normalized block-compressed (BC7 compression) format with sRGB encoding */
+
 };
 
 /**
@@ -1705,6 +1732,7 @@ enum cudaDeviceAttr {
                 by the returned attribute. See ::cudaGPUDirectRDMAWritesOrdering for the numerical values returned here.
               */
     cudaDevAttrMemoryPoolSupportedHandleTypes = 119, /**< Handle types supported with mempool based IPC */
+cudaDevAttrDeferredMappingCudaArraySupported = 121, /**< Device supports deferred mapping CUDA arrays and CUDA mipmapped arrays */
     cudaDevAttrMax
 };
 
@@ -1882,28 +1910,28 @@ enum cudaGraphMemAttributeType {
      * (value type = cuuint64_t)
      * Amount of memory, in bytes, currently associated with graphs.
      */
-    cudaGraphMemAttrUsedMemCurrent = 0x1,
+    cudaGraphMemAttrUsedMemCurrent = 0x0,
 
     /**
      * (value type = cuuint64_t)
      * High watermark of memory, in bytes, associated with graphs since the
      * last time it was reset.  High watermark can only be reset to zero.
      */
-    cudaGraphMemAttrUsedMemHigh = 0x2,
+    cudaGraphMemAttrUsedMemHigh = 0x1,
 
     /**
      * (value type = cuuint64_t)
      * Amount of memory, in bytes, currently allocated for use by
      * the CUDA graphs asynchronous allocator.
      */
-    cudaGraphMemAttrReservedMemCurrent = 0x3,
+    cudaGraphMemAttrReservedMemCurrent = 0x2,
 
     /**
      * (value type = cuuint64_t)
      * High watermark of memory, in bytes, currently allocated for use by
      * the CUDA graphs asynchronous allocator.
      */
-    cudaGraphMemAttrReservedMemHigh = 0x4
+    cudaGraphMemAttrReservedMemHigh = 0x3
 };
 
 /**
@@ -2400,6 +2428,200 @@ struct cudaExternalSemaphoreHandleDesc {
     unsigned int flags;
 };
 
+
+/**
+ * External semaphore signal parameters(deprecated)
+ */
+struct __device_builtin__ cudaExternalSemaphoreSignalParams_v1 {
+    struct {
+        /**
+         * Parameters for fence objects
+         */
+        struct {
+            /**
+             * Value of fence to be signaled
+             */
+            unsigned long long value;
+        } fence;
+        union {
+            /**
+             * Pointer to NvSciSyncFence. Valid if ::cudaExternalSemaphoreHandleType
+             * is of type ::cudaExternalSemaphoreHandleTypeNvSciSync.
+             */
+            void *fence;
+            unsigned long long reserved;
+        } nvSciSync;
+        /**
+         * Parameters for keyed mutex objects
+         */
+        struct {
+            /*
+             * Value of key to release the mutex with
+             */
+            unsigned long long key;
+        } keyedMutex;
+    } params;
+    /**
+     * Only when ::cudaExternalSemaphoreSignalParams is used to
+     * signal a ::cudaExternalSemaphore_t of type
+     * ::cudaExternalSemaphoreHandleTypeNvSciSync, the valid flag is 
+     * ::cudaExternalSemaphoreSignalSkipNvSciBufMemSync: which indicates
+     * that while signaling the ::cudaExternalSemaphore_t, no memory
+     * synchronization operations should be performed for any external memory
+     * object imported as ::cudaExternalMemoryHandleTypeNvSciBuf.
+     * For all other types of ::cudaExternalSemaphore_t, flags must be zero.
+     */
+    unsigned int flags;
+};
+
+/**
+* External semaphore wait parameters(deprecated)
+*/
+struct __device_builtin__ cudaExternalSemaphoreWaitParams_v1 {
+    struct {
+        /**
+        * Parameters for fence objects
+        */
+        struct {
+            /**
+            * Value of fence to be waited on
+            */
+            unsigned long long value;
+        } fence;
+        union {
+            /**
+             * Pointer to NvSciSyncFence. Valid if ::cudaExternalSemaphoreHandleType
+             * is of type ::cudaExternalSemaphoreHandleTypeNvSciSync.
+             */
+            void *fence;
+            unsigned long long reserved;
+        } nvSciSync;
+        /**
+         * Parameters for keyed mutex objects
+         */
+        struct {
+            /**
+             * Value of key to acquire the mutex with
+             */
+            unsigned long long key;
+            /**
+             * Timeout in milliseconds to wait to acquire the mutex
+             */
+            unsigned int timeoutMs;
+        } keyedMutex;
+    } params;
+    /**
+     * Only when ::cudaExternalSemaphoreSignalParams is used to
+     * signal a ::cudaExternalSemaphore_t of type
+     * ::cudaExternalSemaphoreHandleTypeNvSciSync, the valid flag is 
+     * ::cudaExternalSemaphoreSignalSkipNvSciBufMemSync: which indicates
+     * that while waiting for the ::cudaExternalSemaphore_t, no memory
+     * synchronization operations should be performed for any external memory
+     * object imported as ::cudaExternalMemoryHandleTypeNvSciBuf.
+     * For all other types of ::cudaExternalSemaphore_t, flags must be zero.
+     */
+    unsigned int flags;
+};
+
+/**
+ * External semaphore signal parameters, compatible with driver type
+ */
+struct __device_builtin__ cudaExternalSemaphoreSignalParams{
+    struct {
+        /**
+         * Parameters for fence objects
+         */
+        struct {
+            /**
+             * Value of fence to be signaled
+             */
+            unsigned long long value;
+        } fence;
+        union {
+            /**
+             * Pointer to NvSciSyncFence. Valid if ::cudaExternalSemaphoreHandleType
+             * is of type ::cudaExternalSemaphoreHandleTypeNvSciSync.
+             */
+            void *fence;
+            unsigned long long reserved;
+        } nvSciSync;
+        /**
+         * Parameters for keyed mutex objects
+         */
+        struct {
+            /*
+             * Value of key to release the mutex with
+             */
+            unsigned long long key;
+        } keyedMutex;
+        unsigned int reserved[12];
+    } params;
+    /**
+     * Only when ::cudaExternalSemaphoreSignalParams is used to
+     * signal a ::cudaExternalSemaphore_t of type
+     * ::cudaExternalSemaphoreHandleTypeNvSciSync, the valid flag is 
+     * ::cudaExternalSemaphoreSignalSkipNvSciBufMemSync: which indicates
+     * that while signaling the ::cudaExternalSemaphore_t, no memory
+     * synchronization operations should be performed for any external memory
+     * object imported as ::cudaExternalMemoryHandleTypeNvSciBuf.
+     * For all other types of ::cudaExternalSemaphore_t, flags must be zero.
+     */
+    unsigned int flags;
+    unsigned int reserved[16];
+};
+
+/**
+ * External semaphore wait parameters, compatible with driver type
+ */
+struct __device_builtin__ cudaExternalSemaphoreWaitParams {
+    struct {
+        /**
+        * Parameters for fence objects
+        */
+        struct {
+            /**
+            * Value of fence to be waited on
+            */
+            unsigned long long value;
+        } fence;
+        union {
+            /**
+             * Pointer to NvSciSyncFence. Valid if ::cudaExternalSemaphoreHandleType
+             * is of type ::cudaExternalSemaphoreHandleTypeNvSciSync.
+             */
+            void *fence;
+            unsigned long long reserved;
+        } nvSciSync;
+        /**
+         * Parameters for keyed mutex objects
+         */
+        struct {
+            /**
+             * Value of key to acquire the mutex with
+             */
+            unsigned long long key;
+            /**
+             * Timeout in milliseconds to wait to acquire the mutex
+             */
+            unsigned int timeoutMs;
+        } keyedMutex;
+        unsigned int reserved[10];
+    } params;
+    /**
+     * Only when ::cudaExternalSemaphoreSignalParams is used to
+     * signal a ::cudaExternalSemaphore_t of type
+     * ::cudaExternalSemaphoreHandleTypeNvSciSync, the valid flag is 
+     * ::cudaExternalSemaphoreSignalSkipNvSciBufMemSync: which indicates
+     * that while waiting for the ::cudaExternalSemaphore_t, no memory
+     * synchronization operations should be performed for any external memory
+     * object imported as ::cudaExternalMemoryHandleTypeNvSciBuf.
+     * For all other types of ::cudaExternalSemaphore_t, flags must be zero.
+     */
+    unsigned int flags;
+    unsigned int reserved[16];
+};
+
+
 /**
  * CUDA Error types
  */
@@ -2551,7 +2773,8 @@ enum cudaGraphExecUpdateResult {
     cudaGraphExecUpdateErrorNotSupported =
         0x6, /**< The update failed because something about the node is not supported */
     cudaGraphExecUpdateErrorUnsupportedFunctionChange =
-        0x7 /**< The update failed because the function of a kernel node changed in an unsupported way */
+        0x7, /**< The update failed because the function of a kernel node changed in an unsupported way */
+cudaGraphExecUpdateErrorAttributesChanged = 0x8 /**< The update failed because the node attributes changed in a way that is not supported */
 };
 
 /**
@@ -2589,6 +2812,8 @@ enum cudaGraphInstantiateFlags {
         1 /**< Automatically free memory allocated in a graph before relaunching. */
 };
 
+
+
 /**
  * Type of stream callback functions.
  * \param stream The stream as passed to ::cudaStreamAddCallback, may be NULL.
@@ -2596,6 +2821,9 @@ enum cudaGraphInstantiateFlags {
  * \param userData User parameter provided at registration.
  */
 typedef void (*cudaStreamCallback_t)(cudaStream_t stream, cudaError_t status, void *userData);
+
+// now begins surface_types.h
+
 
 #define cudaSurfaceType1D 0x01
 #define cudaSurfaceType2D 0x02
@@ -2636,6 +2864,7 @@ struct surfaceReference {
  * An opaque value that represents a CUDA Surface object
  */
 typedef unsigned long long cudaSurfaceObject_t;
+// now begins texture_types.h
 
 #define cudaTextureType1D 0x01
 #define cudaTextureType2D 0x02
@@ -2774,6 +3003,7 @@ struct cudaTextureDesc {
      * Disable any trilinear filtering optimizations.
      */
     int disableTrilinearOptimization;
+    int                         seamlessCubemap;
 };
 
 /**

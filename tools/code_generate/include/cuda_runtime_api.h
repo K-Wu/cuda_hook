@@ -47,9 +47,7 @@
  * Users Notice.
  */
 
-// the following two modifications have been made
-// (1) delete __dv()
-// (2) add functions in the bottom from host_runtime.h and device_functions.h
+
 
 #if !defined(__CUDA_RUNTIME_API_H__)
 #define __CUDA_RUNTIME_API_H__
@@ -137,7 +135,7 @@
  */
 
 /** CUDA Runtime API Version */
-#define CUDART_VERSION  11040
+#define CUDART_VERSION  11060
 
 #if defined(__CUDA_API_VER_MAJOR__) && defined(__CUDA_API_VER_MINOR__)
 # define __CUDART_API_VERSION ((__CUDA_API_VER_MAJOR__ * 1000) + (__CUDA_API_VER_MINOR__ * 10))
@@ -285,8 +283,13 @@ extern "C" {
  * in the current process.
  *
  * Explicitly destroys and cleans up all resources associated with the current
- * device in the current process.  Any subsequent API call to this device will 
- * reinitialize the device.
+ * device in the current process. It is the caller's responsibility to ensure
+ * that the resources are not accessed or passed in subsequent API calls and
+ * doing so will result in undefined behavior. These resources include CUDA types
+ * such as ::cudaStream_t, ::cudaEvent_t, ::cudaArray_t, ::cudaMipmappedArray_t,
+ * ::cudaTextureObject_t, ::cudaSurfaceObject_t, ::textureReference, ::surfaceReference,
+ * ::cudaExternalMemory_t, ::cudaExternalSemaphore_t and ::cudaGraphicsResource_t.
+ * Any subsequent API call to this device will reinitialize the device.
  *
  * Note that this function will reset the device immediately.  It is the caller's
  * responsibility to ensure that the device is not being accessed by any 
@@ -313,6 +316,7 @@ extern __host__ cudaError_t CUDARTAPI cudaDeviceReset(void);
  *
  * \return
  * ::cudaSuccess
+ * \note_device_sync_deprecated
  * \notefnerr
  * \note_init_rt
  * \note_callback
@@ -1668,93 +1672,93 @@ extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaGetDeviceProperties
  *
  * Returns in \p *value the integer value of the attribute \p attr on device
  * \p device. The supported attributes are:
- * - ::cudaDevAttrMaxThreadsPerBlock: Maximum number of threads per block;
- * - ::cudaDevAttrMaxBlockDimX: Maximum x-dimension of a block;
- * - ::cudaDevAttrMaxBlockDimY: Maximum y-dimension of a block;
- * - ::cudaDevAttrMaxBlockDimZ: Maximum z-dimension of a block;
- * - ::cudaDevAttrMaxGridDimX: Maximum x-dimension of a grid;
- * - ::cudaDevAttrMaxGridDimY: Maximum y-dimension of a grid;
- * - ::cudaDevAttrMaxGridDimZ: Maximum z-dimension of a grid;
+ * - ::cudaDevAttrMaxThreadsPerBlock: Maximum number of threads per block
+ * - ::cudaDevAttrMaxBlockDimX: Maximum x-dimension of a block
+ * - ::cudaDevAttrMaxBlockDimY: Maximum y-dimension of a block
+ * - ::cudaDevAttrMaxBlockDimZ: Maximum z-dimension of a block
+ * - ::cudaDevAttrMaxGridDimX: Maximum x-dimension of a grid
+ * - ::cudaDevAttrMaxGridDimY: Maximum y-dimension of a grid
+ * - ::cudaDevAttrMaxGridDimZ: Maximum z-dimension of a grid
  * - ::cudaDevAttrMaxSharedMemoryPerBlock: Maximum amount of shared memory
- *   available to a thread block in bytes;
+ *   available to a thread block in bytes
  * - ::cudaDevAttrTotalConstantMemory: Memory available on device for
- *   __constant__ variables in a CUDA C kernel in bytes;
- * - ::cudaDevAttrWarpSize: Warp size in threads;
+ *   __constant__ variables in a CUDA C kernel in bytes
+ * - ::cudaDevAttrWarpSize: Warp size in threads
  * - ::cudaDevAttrMaxPitch: Maximum pitch in bytes allowed by the memory copy
- *   functions that involve memory regions allocated through ::cudaMallocPitch();
- * - ::cudaDevAttrMaxTexture1DWidth: Maximum 1D texture width;
+ *   functions that involve memory regions allocated through ::cudaMallocPitch()
+ * - ::cudaDevAttrMaxTexture1DWidth: Maximum 1D texture width
  * - ::cudaDevAttrMaxTexture1DLinearWidth: Maximum width for a 1D texture bound
- *   to linear memory;
- * - ::cudaDevAttrMaxTexture1DMipmappedWidth: Maximum mipmapped 1D texture width;
- * - ::cudaDevAttrMaxTexture2DWidth: Maximum 2D texture width;
- * - ::cudaDevAttrMaxTexture2DHeight: Maximum 2D texture height;
+ *   to linear memory
+ * - ::cudaDevAttrMaxTexture1DMipmappedWidth: Maximum mipmapped 1D texture width
+ * - ::cudaDevAttrMaxTexture2DWidth: Maximum 2D texture width
+ * - ::cudaDevAttrMaxTexture2DHeight: Maximum 2D texture height
  * - ::cudaDevAttrMaxTexture2DLinearWidth: Maximum width for a 2D texture
- *   bound to linear memory;
+ *   bound to linear memory
  * - ::cudaDevAttrMaxTexture2DLinearHeight: Maximum height for a 2D texture
- *   bound to linear memory;
+ *   bound to linear memory
  * - ::cudaDevAttrMaxTexture2DLinearPitch: Maximum pitch in bytes for a 2D
- *   texture bound to linear memory;
+ *   texture bound to linear memory
  * - ::cudaDevAttrMaxTexture2DMipmappedWidth: Maximum mipmapped 2D texture
- *   width;
+ *   width
  * - ::cudaDevAttrMaxTexture2DMipmappedHeight: Maximum mipmapped 2D texture
- *   height;
- * - ::cudaDevAttrMaxTexture3DWidth: Maximum 3D texture width;
- * - ::cudaDevAttrMaxTexture3DHeight: Maximum 3D texture height;
- * - ::cudaDevAttrMaxTexture3DDepth: Maximum 3D texture depth;
+ *   height
+ * - ::cudaDevAttrMaxTexture3DWidth: Maximum 3D texture width
+ * - ::cudaDevAttrMaxTexture3DHeight: Maximum 3D texture height
+ * - ::cudaDevAttrMaxTexture3DDepth: Maximum 3D texture depth
  * - ::cudaDevAttrMaxTexture3DWidthAlt: Alternate maximum 3D texture width,
- *   0 if no alternate maximum 3D texture size is supported;
+ *   0 if no alternate maximum 3D texture size is supported
  * - ::cudaDevAttrMaxTexture3DHeightAlt: Alternate maximum 3D texture height,
- *   0 if no alternate maximum 3D texture size is supported;
+ *   0 if no alternate maximum 3D texture size is supported
  * - ::cudaDevAttrMaxTexture3DDepthAlt: Alternate maximum 3D texture depth,
- *   0 if no alternate maximum 3D texture size is supported;
+ *   0 if no alternate maximum 3D texture size is supported
  * - ::cudaDevAttrMaxTextureCubemapWidth: Maximum cubemap texture width or
- *   height;
- * - ::cudaDevAttrMaxTexture1DLayeredWidth: Maximum 1D layered texture width;
+ *   height
+ * - ::cudaDevAttrMaxTexture1DLayeredWidth: Maximum 1D layered texture width
  * - ::cudaDevAttrMaxTexture1DLayeredLayers: Maximum layers in a 1D layered
- *   texture;
- * - ::cudaDevAttrMaxTexture2DLayeredWidth: Maximum 2D layered texture width;
- * - ::cudaDevAttrMaxTexture2DLayeredHeight: Maximum 2D layered texture height;
+ *   texture
+ * - ::cudaDevAttrMaxTexture2DLayeredWidth: Maximum 2D layered texture width
+ * - ::cudaDevAttrMaxTexture2DLayeredHeight: Maximum 2D layered texture height
  * - ::cudaDevAttrMaxTexture2DLayeredLayers: Maximum layers in a 2D layered
- *   texture;
+ *   texture
  * - ::cudaDevAttrMaxTextureCubemapLayeredWidth: Maximum cubemap layered
- *   texture width or height;
+ *   texture width or height
  * - ::cudaDevAttrMaxTextureCubemapLayeredLayers: Maximum layers in a cubemap
- *   layered texture;
- * - ::cudaDevAttrMaxSurface1DWidth: Maximum 1D surface width;
- * - ::cudaDevAttrMaxSurface2DWidth: Maximum 2D surface width;
- * - ::cudaDevAttrMaxSurface2DHeight: Maximum 2D surface height;
- * - ::cudaDevAttrMaxSurface3DWidth: Maximum 3D surface width;
- * - ::cudaDevAttrMaxSurface3DHeight: Maximum 3D surface height;
- * - ::cudaDevAttrMaxSurface3DDepth: Maximum 3D surface depth;
- * - ::cudaDevAttrMaxSurface1DLayeredWidth: Maximum 1D layered surface width;
+ *   layered texture
+ * - ::cudaDevAttrMaxSurface1DWidth: Maximum 1D surface width
+ * - ::cudaDevAttrMaxSurface2DWidth: Maximum 2D surface width
+ * - ::cudaDevAttrMaxSurface2DHeight: Maximum 2D surface height
+ * - ::cudaDevAttrMaxSurface3DWidth: Maximum 3D surface width
+ * - ::cudaDevAttrMaxSurface3DHeight: Maximum 3D surface height
+ * - ::cudaDevAttrMaxSurface3DDepth: Maximum 3D surface depth
+ * - ::cudaDevAttrMaxSurface1DLayeredWidth: Maximum 1D layered surface width
  * - ::cudaDevAttrMaxSurface1DLayeredLayers: Maximum layers in a 1D layered
- *   surface;
- * - ::cudaDevAttrMaxSurface2DLayeredWidth: Maximum 2D layered surface width;
- * - ::cudaDevAttrMaxSurface2DLayeredHeight: Maximum 2D layered surface height;
+ *   surface
+ * - ::cudaDevAttrMaxSurface2DLayeredWidth: Maximum 2D layered surface width
+ * - ::cudaDevAttrMaxSurface2DLayeredHeight: Maximum 2D layered surface height
  * - ::cudaDevAttrMaxSurface2DLayeredLayers: Maximum layers in a 2D layered
- *   surface;
- * - ::cudaDevAttrMaxSurfaceCubemapWidth: Maximum cubemap surface width;
+ *   surface
+ * - ::cudaDevAttrMaxSurfaceCubemapWidth: Maximum cubemap surface width
  * - ::cudaDevAttrMaxSurfaceCubemapLayeredWidth: Maximum cubemap layered
- *   surface width;
+ *   surface width
  * - ::cudaDevAttrMaxSurfaceCubemapLayeredLayers: Maximum layers in a cubemap
- *   layered surface;
+ *   layered surface
  * - ::cudaDevAttrMaxRegistersPerBlock: Maximum number of 32-bit registers 
- *   available to a thread block;
- * - ::cudaDevAttrClockRate: Peak clock frequency in kilohertz;
+ *   available to a thread block
+ * - ::cudaDevAttrClockRate: Peak clock frequency in kilohertz
  * - ::cudaDevAttrTextureAlignment: Alignment requirement; texture base
  *   addresses aligned to ::textureAlign bytes do not need an offset applied
- *   to texture fetches;
+ *   to texture fetches
  * - ::cudaDevAttrTexturePitchAlignment: Pitch alignment requirement for 2D
- *   texture references bound to pitched memory;
+ *   texture references bound to pitched memory
  * - ::cudaDevAttrGpuOverlap: 1 if the device can concurrently copy memory
- *   between host and device while executing a kernel, or 0 if not;
- * - ::cudaDevAttrMultiProcessorCount: Number of multiprocessors on the device;
+ *   between host and device while executing a kernel, or 0 if not
+ * - ::cudaDevAttrMultiProcessorCount: Number of multiprocessors on the device
  * - ::cudaDevAttrKernelExecTimeout: 1 if there is a run time limit for kernels
- *   executed on the device, or 0 if not;
+ *   executed on the device, or 0 if not
  * - ::cudaDevAttrIntegrated: 1 if the device is integrated with the memory
- *   subsystem, or 0 if not;
+ *   subsystem, or 0 if not
  * - ::cudaDevAttrCanMapHostMemory: 1 if the device can map host memory into
- *   the CUDA address space, or 0 if not;
+ *   the CUDA address space, or 0 if not
  * - ::cudaDevAttrComputeMode: Compute mode is the compute mode that the device
  *   is currently in. Available modes are as follows:
  *   - ::cudaComputeModeDefault: Default mode - Device is not restricted and
@@ -1770,75 +1774,84 @@ extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaGetDeviceProperties
  *   multiple kernels within the same context simultaneously, or 0 if
  *   not. It is not guaranteed that multiple kernels will be resident on the
  *   device concurrently so this feature should not be relied upon for
- *   correctness;
+ *   correctness.
  * - ::cudaDevAttrEccEnabled: 1 if error correction is enabled on the device,
- *   0 if error correction is disabled or not supported by the device;
- * - ::cudaDevAttrPciBusId: PCI bus identifier of the device;
+ *   0 if error correction is disabled or not supported by the device
+ * - ::cudaDevAttrPciBusId: PCI bus identifier of the device
  * - ::cudaDevAttrPciDeviceId: PCI device (also known as slot) identifier of
- *   the device;
+ *   the device
  * - ::cudaDevAttrTccDriver: 1 if the device is using a TCC driver. TCC is only
- *   available on Tesla hardware running Windows Vista or later;
- * - ::cudaDevAttrMemoryClockRate: Peak memory clock frequency in kilohertz;
- * - ::cudaDevAttrGlobalMemoryBusWidth: Global memory bus width in bits;
+ *   available on Tesla hardware running Windows Vista or later.
+ * - ::cudaDevAttrMemoryClockRate: Peak memory clock frequency in kilohertz
+ * - ::cudaDevAttrGlobalMemoryBusWidth: Global memory bus width in bits
  * - ::cudaDevAttrL2CacheSize: Size of L2 cache in bytes. 0 if the device
- *   doesn't have L2 cache;
+ *   doesn't have L2 cache.
  * - ::cudaDevAttrMaxThreadsPerMultiProcessor: Maximum resident threads per 
- *   multiprocessor;
+ *   multiprocessor
  * - ::cudaDevAttrUnifiedAddressing: 1 if the device shares a unified address
- *   space with the host, or 0 if not;
+ *   space with the host, or 0 if not
  * - ::cudaDevAttrComputeCapabilityMajor: Major compute capability version
- *   number;
+ *   number
  * - ::cudaDevAttrComputeCapabilityMinor: Minor compute capability version
- *   number;
+ *   number
  * - ::cudaDevAttrStreamPrioritiesSupported: 1 if the device supports stream
- *   priorities, or 0 if not;
+ *   priorities, or 0 if not
  * - ::cudaDevAttrGlobalL1CacheSupported: 1 if device supports caching globals 
- *    in L1 cache, 0 if not;
+ *    in L1 cache, 0 if not
  * - ::cudaDevAttrLocalL1CacheSupported: 1 if device supports caching locals 
- *    in L1 cache, 0 if not;
+ *    in L1 cache, 0 if not
  * - ::cudaDevAttrMaxSharedMemoryPerMultiprocessor: Maximum amount of shared memory
  *   available to a multiprocessor in bytes; this amount is shared by all 
- *   thread blocks simultaneously resident on a multiprocessor;
+ *   thread blocks simultaneously resident on a multiprocessor
  * - ::cudaDevAttrMaxRegistersPerMultiprocessor: Maximum number of 32-bit registers 
  *   available to a multiprocessor; this number is shared by all thread blocks
- *   simultaneously resident on a multiprocessor;
+ *   simultaneously resident on a multiprocessor
  * - ::cudaDevAttrManagedMemory: 1 if device supports allocating
- *   managed memory, 0 if not;
- * - ::cudaDevAttrIsMultiGpuBoard: 1 if device is on a multi-GPU board, 0 if not;
+ *   managed memory, 0 if not
+ * - ::cudaDevAttrIsMultiGpuBoard: 1 if device is on a multi-GPU board, 0 if not
  * - ::cudaDevAttrMultiGpuBoardGroupID: Unique identifier for a group of devices on the
- *   same multi-GPU board;
+ *   same multi-GPU board
  * - ::cudaDevAttrHostNativeAtomicSupported: 1 if the link between the device and the
- *   host supports native atomic operations;
+ *   host supports native atomic operations
  * - ::cudaDevAttrSingleToDoublePrecisionPerfRatio: Ratio of single precision performance
- *   (in floating-point operations per second) to double precision performance;
+ *   (in floating-point operations per second) to double precision performance
  * - ::cudaDevAttrPageableMemoryAccess: 1 if the device supports coherently accessing
- *   pageable memory without calling cudaHostRegister on it, and 0 otherwise.
+ *   pageable memory without calling cudaHostRegister on it, and 0 otherwise
  * - ::cudaDevAttrConcurrentManagedAccess: 1 if the device can coherently access managed
- *   memory concurrently with the CPU, and 0 otherwise.
+ *   memory concurrently with the CPU, and 0 otherwise
  * - ::cudaDevAttrComputePreemptionSupported: 1 if the device supports
- *   Compute Preemption, 0 if not.
+ *   Compute Preemption, 0 if not
  * - ::cudaDevAttrCanUseHostPointerForRegisteredMem: 1 if the device can access host
- *   registered memory at the same virtual address as the CPU, and 0 otherwise.
+ *   registered memory at the same virtual address as the CPU, and 0 otherwise
  * - ::cudaDevAttrCooperativeLaunch: 1 if the device supports launching cooperative kernels
- *   via ::cudaLaunchCooperativeKernel, and 0 otherwise.
+ *   via ::cudaLaunchCooperativeKernel, and 0 otherwise
  * - ::cudaDevAttrCooperativeMultiDeviceLaunch: 1 if the device supports launching cooperative
- *   kernels via ::cudaLaunchCooperativeKernelMultiDevice, and 0 otherwise.
+ *   kernels via ::cudaLaunchCooperativeKernelMultiDevice, and 0 otherwise
  * - ::cudaDevAttrCanFlushRemoteWrites: 1 if the device supports flushing of outstanding 
- *   remote writes, and 0 otherwise.
+ *   remote writes, and 0 otherwise
  * - ::cudaDevAttrHostRegisterSupported: 1 if the device supports host memory registration
- *   via ::cudaHostRegister, and 0 otherwise.
+ *   via ::cudaHostRegister, and 0 otherwise
  * - ::cudaDevAttrPageableMemoryAccessUsesHostPageTables: 1 if the device accesses pageable memory via the
- *   host's page tables, and 0 otherwise.
+ *   host's page tables, and 0 otherwise
  * - ::cudaDevAttrDirectManagedMemAccessFromHost: 1 if the host can directly access managed memory on the device
- *   without migration, and 0 otherwise.
+ *   without migration, and 0 otherwise
  * - ::cudaDevAttrMaxSharedMemoryPerBlockOptin: Maximum per block shared memory size on the device. This value can
  *   be opted into when using ::cudaFuncSetAttribute
- * - ::cudaDevAttrMaxBlocksPerMultiprocessor: Maximum number of thread blocks that can reside on a multiprocessor.
- * - ::cudaDevAttrMaxPersistingL2CacheSize: Maximum L2 persisting lines capacity setting in bytes.
- * - ::cudaDevAttrMaxAccessPolicyWindowSize: Maximum value of cudaAccessPolicyWindow::num_bytes.
- * - ::cudaDevAttrHostRegisterReadOnly: Device supports using the ::cudaHostRegister flag cudaHostRegisterReadOnly
- *   to register memory that must be mapped as read-only to the GPU
+ * - ::cudaDevAttrMaxBlocksPerMultiprocessor: Maximum number of thread blocks that can reside on a multiprocessor
+ * - ::cudaDevAttrMaxPersistingL2CacheSize: Maximum L2 persisting lines capacity setting in bytes
+ * - ::cudaDevAttrMaxAccessPolicyWindowSize: Maximum value of cudaAccessPolicyWindow::num_bytes
+ * - ::cudaDevAttrReservedSharedMemoryPerBlock: Shared memory reserved by CUDA driver per block in bytes
  * - ::cudaDevAttrSparseCudaArraySupported: 1 if the device supports sparse CUDA arrays and sparse CUDA mipmapped arrays.
+ * - ::cudaDevAttrHostRegisterReadOnlySupported: Device supports using the ::cudaHostRegister flag cudaHostRegisterReadOnly
+ *   to register memory that must be mapped as read-only to the GPU
+ * - ::cudaDevAttrMemoryPoolsSupported: 1 if the device supports using the cudaMallocAsync and cudaMemPool family of APIs, and 0 otherwise
+ * - ::cudaDevAttrGPUDirectRDMASupported: 1 if the device supports GPUDirect RDMA APIs, and 0 otherwise
+ * - ::cudaDevAttrGPUDirectRDMAFlushWritesOptions: bitmask to be interpreted according to the ::cudaFlushGPUDirectRDMAWritesOptions enum 
+ * - ::cudaDevAttrGPUDirectRDMAWritesOrdering: see the ::cudaGPUDirectRDMAWritesOrdering enum for numerical values
+ * - ::cudaDevAttrMemoryPoolSupportedHandleTypes: Bitmask of handle types supported with mempool based IPC
+
+ * - ::cudaDevAttrDeferredMappingCudaArraySupported : 1 if the device supports deferred mapping CUDA arrays and CUDA mipmapped arrays.
+
  *
  * \param value  - Returned device attribute value
  * \param attr   - Device attribute to query
@@ -2048,6 +2061,10 @@ extern __host__ cudaError_t CUDARTAPI cudaChooseDevice(int *device, const struct
  * This call may be made from any host thread, to any device, and at 
  * any time.  This function will do no synchronization with the previous 
  * or new device, and should be considered a very low overhead call.
+ * If the current context bound to the calling thread is not the primary context,
+ * this call will bind the primary context to the calling thread and all the
+ * subsequent memory allocations, stream and event creations, and kernel launches
+ * will be associated with the primary context.
  *
  * \param device - Device on which the active host thread should execute the
  * device code.
@@ -3104,7 +3121,7 @@ extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaEventCreateWithFlag
  * \brief Records an event
  *
  * Captures in \p event the contents of \p stream at the time of this call.
- * \p event and \p stream must be on the same device.
+ * \p event and \p stream must be on the same CUDA context.
  * Calls such as ::cudaEventQuery() or ::cudaStreamWaitEvent() will then
  * examine or wait for completion of the work that was captured. Uses of
  * \p stream after this call do not modify \p event. See note on default
@@ -3144,7 +3161,7 @@ extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaEventRecord(cudaEve
  * \brief Records an event
  *
  * Captures in \p event the contents of \p stream at the time of this call.
- * \p event and \p stream must be on the same device.
+ * \p event and \p stream must be on the same CUDA context.
  * Calls such as ::cudaEventQuery() or ::cudaStreamWaitEvent() will then
  * examine or wait for completion of the work that was captured. Uses of
  * \p stream after this call do not modify \p event. See note on default
@@ -4857,8 +4874,13 @@ extern __host__ cudaError_t CUDARTAPI cudaMallocPitch(void **devPtr, size_t *pit
  * - ::cudaArraySurfaceLoadStore: Allocates an array that can be read from or written to using a surface reference
  * - ::cudaArrayTextureGather: This flag indicates that texture gather operations will be performed on the array.
  * - ::cudaArraySparse: Allocates a CUDA array without physical backing memory. The subregions within this sparse array
- *   can later be mapped to physical memory by calling ::cuMemMapArrayAsync. The physical backing memory must be allocated 
- *   via ::cuMemCreate.
+ *   can later be mapped onto a physical memory allocation by calling ::cuMemMapArrayAsync. 
+ *   The physical backing memory must be allocated via ::cuMemCreate.
+
+ * - ::cudaArrayDeferredMapping: Allocates a CUDA array without physical backing memory. The entire array can 
+ *   later be mapped onto a physical memory allocation by calling ::cuMemMapArrayAsync. 
+ *   The physical backing memory must be allocated via ::cuMemCreate.
+
  *
  * \p width and \p height must meet certain size requirements. See ::cudaMalloc3DArray() for more details.
  *
@@ -5319,8 +5341,13 @@ extern __host__ cudaError_t CUDARTAPI cudaMalloc3D(struct cudaPitchedPtr* pitche
  * - ::cudaArrayTextureGather: This flag indicates that texture gather operations will be performed on the CUDA 
  *   array. Texture gather can only be performed on 2D CUDA arrays.
  * - ::cudaArraySparse: Allocates a CUDA array without physical backing memory. The subregions within this sparse array 
- *   can later be mapped to physical memory by calling ::cuMemMapArrayAsync. This flag can only be used for 
- *   creating 2D, 3D or 2D layered sparse CUDA arrays. The physical backing memory must be  allocated via ::cuMemCreate.
+ *   can later be mapped onto a physical memory allocation by calling ::cuMemMapArrayAsync. This flag can only be used for 
+ *   creating 2D, 3D or 2D layered sparse CUDA arrays. The physical backing memory must be allocated via ::cuMemCreate.
+
+ * - ::cudaArrayDeferredMapping: Allocates a CUDA array without physical backing memory. The entire array can
+ *   later be mapped onto a physical memory allocation by calling ::cuMemMapArrayAsync. The physical backing memory must be allocated
+ *   via ::cuMemCreate.
+
  *
  * The width, height and depth extents must meet certain size requirements as listed in the following table.
  * All values are specified in elements.
@@ -5462,9 +5489,14 @@ extern __host__ cudaError_t CUDARTAPI cudaMalloc3DArray(cudaArray_t *array, cons
  * - ::cudaArrayTextureGather: This flag indicates that texture gather operations will be performed on the CUDA 
  *   array. Texture gather can only be performed on 2D CUDA mipmapped arrays, and the gather operations are
  *   performed only on the most detailed mipmap level.
- * - ::cudaArraySparse: Allocates a CUDA array without physical backing memory. The subregions within this sparse array
- *   can later be mapped to physical memory by calling ::cuMemMapArrayAsync. This flag can only be used for creating 
+ * - ::cudaArraySparse: Allocates a CUDA mipmapped array without physical backing memory. The subregions within this sparse array
+ *   can later be mapped onto a physical memory allocation by calling ::cuMemMapArrayAsync. This flag can only be used for creating 
  *   2D, 3D or 2D layered sparse CUDA mipmapped arrays. The physical backing memory must be allocated via ::cuMemCreate.
+
+ * - ::cudaArrayDeferredMapping: Allocates a CUDA mipmapped array without physical backing memory. The entire array can
+ *   later be mapped onto a physical memory allocation by calling ::cuMemMapArrayAsync. The physical backing memory must be allocated
+ *   via ::cuMemCreate.
+
  *
  * The width, height and depth extents must meet certain size requirements as listed in the following table.
  * All values are specified in elements.
@@ -5956,6 +5988,55 @@ extern __host__ cudaError_t CUDARTAPI cudaArrayGetInfo(struct cudaChannelFormatD
  */
 extern __host__ cudaError_t CUDARTAPI cudaArrayGetPlane(cudaArray_t *pPlaneArray, cudaArray_t hArray, unsigned int planeIdx);
 
+
+/**
+ * \brief Returns the memory requirements of a CUDA array
+ *
+ * Returns the memory requirements of a CUDA array in \p memoryRequirements
+ * If the CUDA array is not allocated with flag ::cudaArrayDeferredMapping
+ * ::cudaErrorInvalidValue will be returned.
+ *
+ * The returned value in ::cudaArrayMemoryRequirements::size
+ * represents the total size of the CUDA array.
+ * The returned value in ::cudaArrayMemoryRequirements::alignment
+ * represents the alignment necessary for mapping the CUDA array.
+ *
+ * \return
+ * ::cudaSuccess
+ * ::cudaErrorInvalidValue
+ *
+ * \param[out] memoryRequirements - Pointer to ::cudaArrayMemoryRequirements
+ * \param[in] array - CUDA array to get the memory requirements of
+ * \param[in] device - Device to get the memory requirements for
+ * \sa ::cudaMipmappedArrayGetMemoryRequirements
+ */
+extern __host__ cudaError_t CUDARTAPI cudaArrayGetMemoryRequirements(struct cudaArrayMemoryRequirements  *memoryRequirements, cudaArray_t array, int device);
+
+/**
+ * \brief Returns the memory requirements of a CUDA mipmapped array
+ *
+ * Returns the memory requirements of a CUDA mipmapped array in \p memoryRequirements
+ * If the CUDA mipmapped array is not allocated with flag ::cudaArrayDeferredMapping
+ * ::cudaErrorInvalidValue will be returned.
+ *
+ * The returned value in ::cudaArrayMemoryRequirements::size
+ * represents the total size of the CUDA mipmapped array.
+ * The returned value in ::cudaArrayMemoryRequirements::alignment
+ * represents the alignment necessary for mapping the CUDA mipmapped
+ * array.
+ *
+ * \return
+ * ::cudaSuccess
+ * ::cudaErrorInvalidValue
+ *
+ * \param[out] memoryRequirements - Pointer to ::cudaArrayMemoryRequirements
+ * \param[in] mipmap - CUDA mipmapped array to get the memory requirements of
+ * \param[in] device - Device to get the memory requirements for
+ * \sa ::cudaArrayGetMemoryRequirements
+ */
+extern __host__ cudaError_t CUDARTAPI cudaMipmappedArrayGetMemoryRequirements(struct cudaArrayMemoryRequirements *memoryRequirements, cudaMipmappedArray_t mipmap, int device);
+
+
 /**
  * \brief Returns the layout properties of a sparse CUDA array
  *
@@ -6288,7 +6369,7 @@ extern __host__ cudaError_t CUDARTAPI cudaMemcpy2DFromArray(void *dst, size_t dp
  * ::cuMemcpy2D,
  * ::cuMemcpy2DUnaligned
  */
-extern __host__ cudaError_t CUDARTAPI cudaMemcpy2DArrayToArray(cudaArray_t dst, size_t wOffsetDst, size_t hOffsetDst, cudaArray_const_t src, size_t wOffsetSrc, size_t hOffsetSrc, size_t width, size_t height, enum cudaMemcpyKind kind);
+extern __host__ cudaError_t CUDARTAPI cudaMemcpy2DArrayToArray(cudaArray_t dst, size_t wOffsetDst, size_t hOffsetDst, cudaArray_const_t src, size_t wOffsetSrc, size_t hOffsetSrc, size_t width, size_t height, enum cudaMemcpyKind kind __dv(cudaMemcpyDeviceToDevice));
 
 /**
  * \brief Copies data to the given symbol on the device
@@ -6331,7 +6412,7 @@ extern __host__ cudaError_t CUDARTAPI cudaMemcpy2DArrayToArray(cudaArray_t dst, 
  * ::cuMemcpyHtoD,
  * ::cuMemcpyDtoD
  */
-extern __host__ cudaError_t CUDARTAPI cudaMemcpyToSymbol(const void *symbol, const void *src, size_t count, size_t offset, enum cudaMemcpyKind kind);
+extern __host__ cudaError_t CUDARTAPI cudaMemcpyToSymbol(const void *symbol, const void *src, size_t count, size_t offset, enum cudaMemcpyKind kind __dv(cudaMemcpyHostToDevice));
 
 /**
  * \brief Copies data from the given symbol on the device
@@ -6374,7 +6455,7 @@ extern __host__ cudaError_t CUDARTAPI cudaMemcpyToSymbol(const void *symbol, con
  * ::cuMemcpyDtoH,
  * ::cuMemcpyDtoD
  */
-extern __host__ cudaError_t CUDARTAPI cudaMemcpyFromSymbol(void *dst, const void *symbol, size_t count, size_t offset, enum cudaMemcpyKind kind);
+extern __host__ cudaError_t CUDARTAPI cudaMemcpyFromSymbol(void *dst, const void *symbol, size_t count, size_t offset, enum cudaMemcpyKind kind __dv(cudaMemcpyDeviceToHost));
 
 
 /**
@@ -7469,7 +7550,7 @@ extern __CUDA_DEPRECATED __host__ cudaError_t CUDARTAPI cudaMemcpyFromArray(void
  * ::cudaMemcpyToSymbolAsync, ::cudaMemcpyFromSymbolAsync,
  * ::cuMemcpyAtoA
  */
-extern __CUDA_DEPRECATED __host__ cudaError_t CUDARTAPI cudaMemcpyArrayToArray(cudaArray_t dst, size_t wOffsetDst, size_t hOffsetDst, cudaArray_const_t src, size_t wOffsetSrc, size_t hOffsetSrc, size_t count, enum cudaMemcpyKind kind);
+extern __CUDA_DEPRECATED __host__ cudaError_t CUDARTAPI cudaMemcpyArrayToArray(cudaArray_t dst, size_t wOffsetDst, size_t hOffsetDst, cudaArray_const_t src, size_t wOffsetSrc, size_t hOffsetSrc, size_t count, enum cudaMemcpyKind kind __dv(cudaMemcpyDeviceToDevice));
 
 /**
  * \brief Copies data between host and device
@@ -7715,6 +7796,12 @@ extern __host__ cudaError_t CUDARTAPI cudaMemPoolTrimTo(cudaMemPool_t memPool, s
  *                    Allow ::cudaMallocAsync to insert new stream dependencies
  *                    in order to establish the stream ordering required to reuse
  *                    a piece of memory released by ::cudaFreeAsync (default enabled).
+ * - ::cudaMemPoolAttrReservedMemHigh: (value type = cuuint64_t)
+ *                    Reset the high watermark that tracks the amount of backing memory that was
+ *                    allocated for the memory pool. It is illegal to set this attribute to a non-zero value.
+ * - ::cudaMemPoolAttrUsedMemHigh: (value type = cuuint64_t)
+ *                    Reset the high watermark that tracks the amount of used memory that was
+ *                    allocated for the memory pool. It is illegal to set this attribute to a non-zero value.
  *
  * \param[in] pool  - The memory pool to modify
  * \param[in] attr  - The attribute to modify
@@ -7753,6 +7840,16 @@ extern __host__ cudaError_t CUDARTAPI cudaMemPoolSetAttribute(cudaMemPool_t memP
  *                    Allow ::cudaMallocAsync to insert new stream dependencies
  *                    in order to establish the stream ordering required to reuse
  *                    a piece of memory released by ::cudaFreeAsync (default enabled).
+ * - ::cudaMemPoolAttrReservedMemCurrent: (value type = cuuint64_t)
+ *                    Amount of backing memory currently allocated for the mempool.
+ * - ::cudaMemPoolAttrReservedMemHigh: (value type = cuuint64_t)
+ *                    High watermark of backing memory allocated for the mempool since
+ *                    the last time it was reset.
+ * - ::cudaMemPoolAttrUsedMemCurrent: (value type = cuuint64_t)
+ *                    Amount of memory from the pool that is currently in use by the application.
+ * - ::cudaMemPoolAttrUsedMemHigh: (value type = cuuint64_t)
+ *                    High watermark of the amount of memory from the pool that was in use by the
+ *                    application since the last time it was reset.
  *
  * \param[in] pool  - The memory pool to get attributes of 
  * \param[in] attr  - The attribute to get
@@ -8576,7 +8673,7 @@ extern __host__ cudaError_t CUDARTAPI cudaGraphicsResourceGetMappedMipmappedArra
  * ::cuTexRefSetFlags,
  * ::cuTexRefSetBorderColor
  */
-extern __CUDA_DEPRECATED __host__ cudaError_t CUDARTAPI cudaBindTexture(size_t *offset, const struct textureReference *texref, const void *devPtr, const struct cudaChannelFormatDesc *desc, size_t size);
+extern __CUDA_DEPRECATED __host__ cudaError_t CUDARTAPI cudaBindTexture(size_t *offset, const struct textureReference *texref, const void *devPtr, const struct cudaChannelFormatDesc *desc, size_t size __dv(UINT_MAX));
 
 /**
  * \brief Binds a 2D memory area to a texture
@@ -9028,6 +9125,7 @@ extern __host__ struct cudaChannelFormatDesc CUDARTAPI cudaCreateChannelDesc(int
             float                       minMipmapLevelClamp;
             float                       maxMipmapLevelClamp;
             int                         disableTrilinearOptimization;
+            int                         seamlessCubemap;
         };
  * \endcode
  * where
@@ -9087,6 +9185,11 @@ extern __host__ struct cudaChannelFormatDesc CUDARTAPI cudaCreateChannelDesc(int
  *
  * - ::cudaTextureDesc::disableTrilinearOptimization specifies whether the trilinear filtering optimizations will be disabled.
  *
+ * - ::cudaTextureDesc::seamlessCubemap specifies whether seamless cube map filtering is enabled. This flag can only be specified if the 
+ *   underlying resource is a CUDA array or a CUDA mipmapped array that was created with the flag ::cudaArrayCubemap.
+ *   When seamless cube map filtering is enabled, texture address modes specified by ::cudaTextureDesc::addressMode are ignored.
+ *   Instead, if the ::cudaTextureDesc::filterMode is set to ::cudaFilterModePoint the address mode ::cudaAddressModeClamp will be applied for all dimensions.
+ *   If the ::cudaTextureDesc::filterMode is set to ::cudaFilterModeLinear seamless cube map filtering will be performed when sampling along the cube face borders.
  *
  * The ::cudaResourceViewDesc struct is defined as
  * \code
@@ -10797,7 +10900,7 @@ extern __host__ cudaError_t CUDARTAPI cudaGraphExternalSemaphoresWaitNodeSetPara
  * \param nodeParams      - Parameters for the node
  *
  * When ::cudaGraphAddMemAllocNode creates an allocation node, it returns the address of the allocation in
- * \param nodeParams.dptr.  The allocation's address remains fixed across instantiations and launches.
+ * \p nodeParams.dptr.  The allocation's address remains fixed across instantiations and launches.
  *
  * If the allocation is freed in the same graph, by creating a free node using ::cudaGraphAddMemFreeNode,
  * the allocation can be accessed by nodes ordered after the allocation node but before the free node.
@@ -11023,10 +11126,10 @@ extern __host__ cudaError_t CUDARTAPI cudaDeviceGraphMemTrim(int device);
  * \note_callback
  *
  * \sa
+ * ::cudaDeviceSetGraphMemAttribute,
  * ::cudaGraphAddMemAllocNode,
  * ::cudaGraphAddMemFreeNode,
  * ::cudaDeviceGraphMemTrim,
- * ::cudaDeviceSetGraphMemAttribute,
  * ::cudaMallocAsync,
  * ::cudaFreeAsync,
  */
@@ -11057,10 +11160,10 @@ extern __host__ cudaError_t CUDARTAPI cudaDeviceGetGraphMemAttribute(int device,
  * \note_callback
  *
  * \sa
+ * ::cudaDeviceGetGraphMemAttribute,
  * ::cudaGraphAddMemAllocNode,
  * ::cudaGraphAddMemFreeNode,
  * ::cudaDeviceGraphMemTrim,
- * ::cudaDeviceGetGraphMemAttribute,
  * ::cudaMallocAsync,
  * ::cudaFreeAsync,
  */
@@ -12082,6 +12185,80 @@ extern __host__ cudaError_t CUDARTAPI cudaGraphExecExternalSemaphoresWaitNodeSet
 #endif
 
 /**
+ * \brief Enables or disables the specified node in the given graphExec
+ *
+ * Sets \p hNode to be either enabled or disabled. Disabled nodes are functionally equivalent 
+ * to empty nodes until they are reenabled. Existing node parameters are not affected by 
+ * disabling/enabling the node.
+ *  
+ * The node is identified by the corresponding node \p hNode in the non-executable 
+ * graph, from which the executable graph was instantiated.   
+ *
+ * \p hNode must not have been removed from the original graph.
+ *
+ * The modifications only affect future launches of \p hGraphExec. Already
+ * enqueued or running launches of \p hGraphExec are not affected by this call.
+ * \p hNode is also not modified by this call.
+ *
+ * \note Currently only kernel nodes are supported. 
+ *
+ * \param hGraphExec - The executable graph in which to set the specified node
+ * \param hNode      - Node from the graph from which graphExec was instantiated
+ * \param isEnabled  - Node is enabled if != 0, otherwise the node is disabled
+ *
+ * \return
+ * ::cudaSuccess,
+ * ::cudaErrorInvalidValue,
+ * \note_graph_thread_safety
+ * \notefnerr
+ * \note_init_rt
+ * \note_callback
+ *
+ * \sa
+ * ::cudaGraphNodeGetEnabled,
+ * ::cudaGraphExecUpdate,
+ * ::cudaGraphInstantiate
+ * ::cudaGraphLaunch
+ */
+#if __CUDART_API_VERSION >= 11060
+extern __host__ cudaError_t CUDARTAPI cudaGraphNodeSetEnabled(cudaGraphExec_t hGraphExec, cudaGraphNode_t hNode, unsigned int isEnabled);
+#endif
+
+/**
+ * \brief Query whether a node in the given graphExec is enabled
+ *
+ * Sets isEnabled to 1 if \p hNode is enabled, or 0 if \p hNode is disabled.
+ *
+ * The node is identified by the corresponding node \p hNode in the non-executable 
+ * graph, from which the executable graph was instantiated.   
+ *
+ * \p hNode must not have been removed from the original graph.
+ *
+ * \note Currently only kernel nodes are supported. 
+ *
+ * \param hGraphExec - The executable graph in which to set the specified node
+ * \param hNode      - Node from the graph from which graphExec was instantiated
+ * \param isEnabled  - Location to return the enabled status of the node
+ *
+ * \return
+ * ::cudaSuccess,
+ * ::cudaErrorInvalidValue,
+ * \note_graph_thread_safety
+ * \notefnerr
+ * \note_init_rt
+ * \note_callback
+ *
+ * \sa
+ * ::cudaGraphNodeSetEnabled,
+ * ::cudaGraphExecUpdate,
+ * ::cudaGraphInstantiate
+ * ::cudaGraphLaunch
+ */
+#if __CUDART_API_VERSION >= 11060
+extern __host__ cudaError_t CUDARTAPI cudaGraphNodeGetEnabled(cudaGraphExec_t hGraphExec, cudaGraphNode_t hNode, unsigned int *isEnabled);
+#endif
+
+/**
  * \brief Check whether an executable graph can be updated with a graph and perform the update if possible
  *
  * Updates the node parameters in the instantiated graph specified by \p hGraphExec with the
@@ -12092,7 +12269,8 @@ extern __host__ cudaError_t CUDARTAPI cudaGraphExecExternalSemaphoresWaitNodeSet
  * - Kernel nodes:
  *   - The owning context of the function cannot change.
  *   - A node whose function originally did not use CUDA dynamic parallelism cannot be updated
- *     to a function which uses CDP
+ *     to a function which uses CDP.
+ *   - A cooperative node cannot be updated to a non-cooperative node, and vice-versa.
  * - Memset and memcpy nodes:
  *   - The CUDA device(s) to which the operand(s) was allocated/mapped cannot change.
  *   - The source/destination memory must be allocated from the same contexts as the original
@@ -12124,6 +12302,8 @@ extern __host__ cudaError_t CUDARTAPI cudaGraphExecExternalSemaphoresWaitNodeSet
  * - cudaGraphExecUpdateErrorUnsupportedFunctionChange if the func field of a kernel changed in an
  *   unsupported way(see note above), in which case \p hErrorNode_out is set to the node from \p hGraph
  * - cudaGraphExecUpdateErrorParametersChanged if any parameters to a node changed in a way 
+ *   that is not supported, in which case \p hErrorNode_out is set to the node from \p hGraph
+ * - cudaGraphExecUpdateErrorAttributesChanged if any attributes of a node changed in a way 
  *   that is not supported, in which case \p hErrorNode_out is set to the node from \p hGraph
  * - cudaGraphExecUpdateErrorNotSupported if something about a node is unsupported, like 
  *   the node's type or configuration, in which case \p hErrorNode_out is set to the node from \p hGraph
@@ -12724,15 +12904,15 @@ extern __host__ cudaError_t CUDARTAPI_CDECL cudaGetFuncBySymbol(cudaFunction_t* 
     #undef cudaGetDriverEntryPoint
 
     extern __host__ cudaError_t CUDARTAPI cudaMemcpy(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind);
-    extern __host__ cudaError_t CUDARTAPI cudaMemcpyToSymbol(const void *symbol, const void *src, size_t count, size_t offset, enum cudaMemcpyKind kind);
-    extern __host__ cudaError_t CUDARTAPI cudaMemcpyFromSymbol(void *dst, const void *symbol, size_t count, size_t offset, enum cudaMemcpyKind kind);
+    extern __host__ cudaError_t CUDARTAPI cudaMemcpyToSymbol(const void *symbol, const void *src, size_t count, size_t offset, enum cudaMemcpyKind kind __dv(cudaMemcpyHostToDevice));
+    extern __host__ cudaError_t CUDARTAPI cudaMemcpyFromSymbol(void *dst, const void *symbol, size_t count, size_t offset, enum cudaMemcpyKind kind __dv(cudaMemcpyDeviceToHost));
     extern __host__ cudaError_t CUDARTAPI cudaMemcpy2D(void *dst, size_t dpitch, const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind);
     extern __host__ cudaError_t CUDARTAPI cudaMemcpyToArray(cudaArray_t dst, size_t wOffset, size_t hOffset, const void *src, size_t count, enum cudaMemcpyKind kind);
     extern __host__ cudaError_t CUDARTAPI cudaMemcpy2DToArray(cudaArray_t dst, size_t wOffset, size_t hOffset, const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind);
     extern __host__ cudaError_t CUDARTAPI cudaMemcpyFromArray(void *dst, cudaArray_const_t src, size_t wOffset, size_t hOffset, size_t count, enum cudaMemcpyKind kind);
     extern __host__ cudaError_t CUDARTAPI cudaMemcpy2DFromArray(void *dst, size_t dpitch, cudaArray_const_t src, size_t wOffset, size_t hOffset, size_t width, size_t height, enum cudaMemcpyKind kind);
-    extern __host__ cudaError_t CUDARTAPI cudaMemcpyArrayToArray(cudaArray_t dst, size_t wOffsetDst, size_t hOffsetDst, cudaArray_const_t src, size_t wOffsetSrc, size_t hOffsetSrc, size_t count, enum cudaMemcpyKind kind);
-    extern __host__ cudaError_t CUDARTAPI cudaMemcpy2DArrayToArray(cudaArray_t dst, size_t wOffsetDst, size_t hOffsetDst, cudaArray_const_t src, size_t wOffsetSrc, size_t hOffsetSrc, size_t width, size_t height, enum cudaMemcpyKind kind);
+    extern __host__ cudaError_t CUDARTAPI cudaMemcpyArrayToArray(cudaArray_t dst, size_t wOffsetDst, size_t hOffsetDst, cudaArray_const_t src, size_t wOffsetSrc, size_t hOffsetSrc, size_t count, enum cudaMemcpyKind kind __dv(cudaMemcpyDeviceToDevice));
+    extern __host__ cudaError_t CUDARTAPI cudaMemcpy2DArrayToArray(cudaArray_t dst, size_t wOffsetDst, size_t hOffsetDst, cudaArray_const_t src, size_t wOffsetSrc, size_t hOffsetSrc, size_t width, size_t height, enum cudaMemcpyKind kind __dv(cudaMemcpyDeviceToDevice));
     extern __host__ cudaError_t CUDARTAPI cudaMemcpy3D(const struct cudaMemcpy3DParms *p);
     extern __host__ cudaError_t CUDARTAPI cudaMemcpy3DPeer(const struct cudaMemcpy3DPeerParms *p);
     extern __host__ cudaError_t CUDARTAPI cudaMemset(void *devPtr, int value, size_t count);
@@ -12801,24 +12981,25 @@ extern __host__ cudaError_t CUDARTAPI_CDECL cudaGetFuncBySymbol(cudaFunction_t* 
     #define cudaLaunchKernel __CUDART_API_PTSZ(cudaLaunchKernel)
 #endif
 
-// cuda/targets/x86_64-linux/include/crt/host_runtime.h
+// now begins crt/host_runtime.h
+
 extern void** CUDARTAPI __cudaRegisterFatBinary(
-        void *fatCubin
+  void *fatCubin
 );
 
 extern void CUDARTAPI __cudaRegisterFatBinaryEnd(
-        void **fatCubinHandle
+  void **fatCubinHandle
 );
 
 extern void CUDARTAPI __cudaUnregisterFatBinary(
-        void **fatCubinHandle
+  void **fatCubinHandle
 );
 
 extern void CUDARTAPI __cudaRegisterVar(
         void **fatCubinHandle,
         char  *hostVar,
         char  *deviceAddress,
-        const char  *deviceName,
+  const char  *deviceName,
         int    ext,
         size_t size,
         int    constant,
@@ -12829,7 +13010,7 @@ extern void CUDARTAPI __cudaRegisterManagedVar(
         void **fatCubinHandle,
         void **hostVarPtrAddress,
         char  *deviceAddress,
-        const char  *deviceName,
+  const char  *deviceName,
         int    ext,
         size_t size,
         int    constant,
@@ -12842,9 +13023,9 @@ extern char CUDARTAPI __cudaInitModule(
 
 extern void CUDARTAPI __cudaRegisterTexture(
         void                    **fatCubinHandle,
-        const struct textureReference  *hostVar,
-        const void                    **deviceAddress,
-        const char                     *deviceName,
+  const struct textureReference  *hostVar,
+  const void                    **deviceAddress,
+  const char                     *deviceName,
         int                       dim,       
         int                       norm,      
         int                        ext        
@@ -12852,18 +13033,18 @@ extern void CUDARTAPI __cudaRegisterTexture(
 
 extern void CUDARTAPI __cudaRegisterSurface(
         void                    **fatCubinHandle,
-        const struct surfaceReference  *hostVar,
-        const void                    **deviceAddress,
-        const char                     *deviceName,
+  const struct surfaceReference  *hostVar,
+  const void                    **deviceAddress,
+  const char                     *deviceName,
         int                       dim,       
         int                       ext        
 );
 
 extern void CUDARTAPI __cudaRegisterFunction(
         void   **fatCubinHandle,
-        const char    *hostFun,
+  const char    *hostFun,
         char    *deviceFun,
-        const char    *deviceName,
+  const char    *deviceName,
         int      thread_limit,
         uint3   *tid,
         uint3   *bid,
@@ -12873,19 +13054,17 @@ extern void CUDARTAPI __cudaRegisterFunction(
 );
 
 cudaError_t CUDARTAPI __cudaPopCallConfiguration(
-        dim3         *gridDim,
-        dim3         *blockDim,
-        size_t       *sharedMem,
-        void         *stream
+  dim3         *gridDim,
+  dim3         *blockDim,
+  size_t       *sharedMem,
+  void         *stream
 );
 
-// cuda/targets/x86_64-linux/include/crt/device_functions.h
-unsigned CUDARTAPI __cudaPushCallConfiguration(
-        dim3 gridDim,
-        dim3 blockDim, 
-        size_t sharedMem = 0, 
-        struct CUstream_st *stream = 0
-);
+// now begins crt/device_functions.h
+__host__ __device__  unsigned CUDARTAPI __cudaPushCallConfiguration(dim3 gridDim,
+                                      dim3 blockDim, 
+                                      size_t sharedMem = 0, 
+                                      struct CUstream_st *stream = 0);
 
 #if defined(__cplusplus)
 }

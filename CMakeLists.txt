@@ -38,35 +38,41 @@ add_compile_options (
 include_directories (
     ${PROJECT_SOURCE_DIR}/src/common
     ${PROJECT_SOURCE_DIR}/src/cuda
-    ${PROJECT_SOURCE_DIR}/src/nvml
+    # ${PROJECT_SOURCE_DIR}/src/nvml
     ${PROJECT_SOURCE_DIR}/src/cudart
-    ${PROJECT_SOURCE_DIR}/src/cudnn
+    # ${PROJECT_SOURCE_DIR}/src/cudnn
     ${PROJECT_SOURCE_DIR}/src/cublas
+    ${PROJECT_SOURCE_DIR}/src/cublas_c2
     ${PROJECT_SOURCE_DIR}/src/cublasLt
-    ${PROJECT_SOURCE_DIR}/src/cufft
-    ${PROJECT_SOURCE_DIR}/src/nvtx
-    ${PROJECT_SOURCE_DIR}/src/nvrtc
-    ${PROJECT_SOURCE_DIR}/src/curand
+    ${PROJECT_SOURCE_DIR}/src/cublasXt
+    # ${PROJECT_SOURCE_DIR}/src/cufft
+    # ${PROJECT_SOURCE_DIR}/src/nvtx
+    # ${PROJECT_SOURCE_DIR}/src/nvrtc
+    # ${PROJECT_SOURCE_DIR}/src/curand
     ${PROJECT_SOURCE_DIR}/src/cusparse
-    ${PROJECT_SOURCE_DIR}/src/cusolver
-    ${PROJECT_SOURCE_DIR}/src/nvjpeg
+    ${PROJECT_SOURCE_DIR}/src/cusparse_c2
+    # ${PROJECT_SOURCE_DIR}/src/cusolver
+    # ${PROJECT_SOURCE_DIR}/src/nvjpeg
     ${PROJECT_SOURCE_DIR}/src/nvblas
 )
 
 set (LIB_SRCS
     ${PROJECT_SOURCE_DIR}/src/cuda/cuda_hook.cpp
-    ${PROJECT_SOURCE_DIR}/src/nvml/nvml_hook.cpp
+    # ${PROJECT_SOURCE_DIR}/src/nvml/nvml_hook.cpp
     ${PROJECT_SOURCE_DIR}/src/cudart/cudart_hook.cpp
-    ${PROJECT_SOURCE_DIR}/src/cudnn/cudnn_hook.cpp
+    # ${PROJECT_SOURCE_DIR}/src/cudnn/cudnn_hook.cpp
     ${PROJECT_SOURCE_DIR}/src/cublas/cublas_hook.cpp
+    # ${PROJECT_SOURCE_DIR}/src/cublas_v2/cublas_v2_hook.cpp
     ${PROJECT_SOURCE_DIR}/src/cublasLt/cublasLt_hook.cpp
-    ${PROJECT_SOURCE_DIR}/src/cufft/cufft_hook.cpp
-    ${PROJECT_SOURCE_DIR}/src/nvtx/nvtx_hook.cpp
-    ${PROJECT_SOURCE_DIR}/src/nvrtc/nvrtc_hook.cpp
-    ${PROJECT_SOURCE_DIR}/src/curand/curand_hook.cpp
+    # ${PROJECT_SOURCE_DIR}/src/cublasXt/cublasXt_hook.cpp
+    # ${PROJECT_SOURCE_DIR}/src/cufft/cufft_hook.cpp
+    # ${PROJECT_SOURCE_DIR}/src/nvtx/nvtx_hook.cpp
+    # ${PROJECT_SOURCE_DIR}/src/nvrtc/nvrtc_hook.cpp
+    # ${PROJECT_SOURCE_DIR}/src/curand/curand_hook.cpp
     ${PROJECT_SOURCE_DIR}/src/cusparse/cusparse_hook.cpp
-    ${PROJECT_SOURCE_DIR}/src/cusolver/cusolver_hook.cpp
-    ${PROJECT_SOURCE_DIR}/src/nvjpeg/nvjpeg_hook.cpp
+    # ${PROJECT_SOURCE_DIR}/src/cusparse_v2/cusparse_v2_hook.cpp
+    # ${PROJECT_SOURCE_DIR}/src/cusolver/cusolver_hook.cpp
+    # ${PROJECT_SOURCE_DIR}/src/nvjpeg/nvjpeg_hook.cpp
     ${PROJECT_SOURCE_DIR}/src/nvblas/nvblas_hook.cpp
 )
 

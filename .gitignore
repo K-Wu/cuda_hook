@@ -24,3 +24,6 @@ model/
 
 setting.h
 .config*
+
+src-11.4
+include-11.4
